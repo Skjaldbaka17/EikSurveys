@@ -26,7 +26,11 @@ function accessAuthorized(req,res,next){
 function notFoundHandler(req, res, next) { // eslint-disable-line
     console.log("Not Found")
     res.status(404);
-    res.end("Error")
+    const operationDetails = {
+        message = "Þessi slóð er ekki til",
+        success = false
+    }
+    res.send(operationDetails)
   }
   
   /*Ef upp kemur villa. Hinsvegar væri hægt að gera betur með því að 
