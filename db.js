@@ -12,7 +12,7 @@ async function signUp(data){
         await client.connect()
 
         try{
-            var query = `Insert into ${userDBName}(email, password, invitationkey) values($1, $2, $3) returning id`
+            var query = `Insert into ${userDBName}(email, password, invitationkey) values($1, $2, $3) returning userid`
             var values = [data.email, data.password, data.invitationKey]
             const result = await client.query(query, values)
             const { rows } = result
@@ -22,7 +22,7 @@ async function signUp(data){
             } else {
                 message.success = true
                 message.error = ""
-                message.id = rows[0].id
+                message.userID = rows[0].userid
             }
         }catch(error){
             console.log(error)

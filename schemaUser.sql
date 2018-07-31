@@ -1,5 +1,5 @@
 CREATE TABLE eikusers(
-    id serial PRIMARY key,
+    userid serial PRIMARY key,
     ssn INTEGER NOT NULL DEFAULT -1,
     email varchar(255) NOT NULL DEFAULT '',
     password VARCHAR(255) NOT NULL DEFAULT '', 
