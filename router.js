@@ -16,7 +16,7 @@ async function signUp(req, res){
 
     if(!(email&&password&&invitationKey)){
         operationDetails.success = false
-        operationDetails.error = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
+        operationDetails.message = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
     }else{
         try {
             const data = {
@@ -26,13 +26,13 @@ async function signUp(req, res){
             }
             const message = await db.signUp(data)
             console.log("TheMessage:", message)
-            operationDetails.error = message.error
+            operationDetails.message = message.error
             operationDetails.success = message.success
             operationDetails.id = message.id
         } catch(error){
             console.log(error)
             operationDetails.success = false
-            operationDetails.error = "Kerfisvilla!"
+            operationDetails.message = "Kerfisvilla!"
         }
     }
     res.send(operationDetails)
