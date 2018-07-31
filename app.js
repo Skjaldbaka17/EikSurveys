@@ -25,7 +25,7 @@ function accessAuthorized(req,res,next){
 //Ef síðan er ekki til.
 function notFoundHandler(req, res, next) { // eslint-disable-line
     console.log("Not Found")
-    res.status(404);
+    // res.status(404);
     const operationDetails = {
         message = "Þessi slóð er ekki til",
         success = false
@@ -36,9 +36,14 @@ function notFoundHandler(req, res, next) { // eslint-disable-line
   /*Ef upp kemur villa. Hinsvegar væri hægt að gera betur með því að 
     gefa upp meiri upplýsingar með status-kóðanum (default hér 500)*/
   function errorHandler(err, req, res, next) { // eslint-disable-line
-    console.log("Error")
-    res.status(500);
-    res.end("Error")
+    const operationDetails = {
+        message = "Þessi slóð er ekki til",
+        success = false
+    }
+    res.send(operationDetails)
+    // console.log("Error")
+    // res.status(500);
+    // res.end("Error")
   }
 
 app.use(notFoundHandler);
