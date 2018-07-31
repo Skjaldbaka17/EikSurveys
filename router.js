@@ -89,5 +89,6 @@ function catchErrors(fn) {
 
 router.use(catchErrors(cleanUp))
 router.post('/signUp', catchErrors(signUp))
+router.post('/login', catchErrors(login))
 
 module.exports = router
