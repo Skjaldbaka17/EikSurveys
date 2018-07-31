@@ -1,0 +1,39 @@
+{
+  "name": "eik",
+  "version": "1.0.0",
+  "description": "A server for a survey based mobile app",
+  "main": "app.js",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "fs": "^0.0.1-security",
+    "gray-matter": "^3.1.1",
+    "jQuery": "^1.7.4",
+    "markdown-it": "^8.4.1",
+    "nodemon": "^1.14.12",
+    "path": "^0.12.7",
+    "util": "^0.10.3",
+    "xlsx": "^0.12.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Skjaldbaka17/EikSurveys.git"
+  },
+  "keywords": [
+    "Survey",
+    "Server",
+    "Money",
+    "Make",
+    "Skjaldbaka"
+  ],
+  "author": "Þórður Ágústsson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Skjaldbaka17/EikSurveys/issues"
+  },
+  "homepage": "https://github.com/Skjaldbaka17/EikSurveys#readme"
+}
