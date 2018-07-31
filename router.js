@@ -7,12 +7,12 @@ var operationDetails = {}
 
 async function signUp(req, res){
     const {
-        body: {
+        user: {
             email = false,
             password = false,
             invitationKey = false
         }
-    } = req
+    } = req.body
 
     if(!(email&&password&&invitationKey)){
         operationDetails.success = false
