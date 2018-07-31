@@ -4,6 +4,32 @@ const { Client } = require('pg');
 const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
 
+async function login(data){
+    var message = {}
+    var client = new Client({connectionString})
+    await client.connect()
+
+    try{
+        var query = query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
+        const result = await client.query(query)
+        const {rows} = result
+        if(!rows[0]){
+            message.success = false
+            message.error = "Lykilorð eða netfang er vitlaust"
+        } else {
+            message.success = true
+            message.error = ""
+            message.userID = rows[0].userid
+        }
+    }catch(error){
+        message.success = false
+        message.error = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
 async function signUp(data){
     var message = await isEligibleForSignUp(data)
     if(message.success){
@@ -80,6 +106,6 @@ async function isEmailTaken(email){
 }
 
 
-var database = {signUp}
+var database = {signUp, login}
 
 module.exports = database

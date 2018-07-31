@@ -5,6 +5,39 @@ const db = require('./db')
 
 var operationDetails = {}
 
+async function login(req, res){
+    const {
+        user: {
+            email = false,
+            password = false,
+        }
+    } = req.body
+
+    if(!(email&&password)){
+        operationDetails.success = false
+        operationDetails.message = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
+    }else{
+        try {
+            const data = {
+                email: email,
+                password: await hashPassword(password),
+                invitationKey: invitationKey
+            }
+            const message = await db.login(data)
+            operationDetails.message = message.error
+            operationDetails.success = message.success
+            operationDetails.user = {
+                userID : message.userID
+            }
+        } catch(error){
+            console.log(error)
+            operationDetails.success = false
+            operationDetails.message = "Kerfisvilla!"
+        }
+    }
+    res.send(operationDetails)
+}
+
 async function signUp(req, res){
     const {
         user: {
