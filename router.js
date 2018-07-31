@@ -28,7 +28,9 @@ async function signUp(req, res){
             console.log("TheMessage:", message)
             operationDetails.message = message.error
             operationDetails.success = message.success
-            operationDetails.userID = message.userID
+            operationDetails.user = {
+                userID : message.userID
+            }
         } catch(error){
             console.log(error)
             operationDetails.success = false
