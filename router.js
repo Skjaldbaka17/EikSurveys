@@ -76,6 +76,32 @@ async function hashPassword(password){
     return password
 }
 
+async function feed(req, res){
+    //Have send last survey, and later last programTest (or whatever the 2nd section is) that the app got from the server!
+    const {
+        body: {
+            userID = false
+        }
+    } = req
+
+    if(!userID){
+        await makeOperationDetails(false, "RequiredFieldsEmpty", "Þú ert ekki með heimild fyrir þessum gögnum")
+    } else {
+        var message = await db.feed(userID)
+        operationDetails.success = message.success
+        operationDetails.error = message.error
+        operationDetails.message = message.message
+        operationDetails.feed = message.feed
+    }
+    res.send(operationDetails)
+}
+
+async function makeOperationDetails(success, error, message){
+    operationDetails.success = success
+    operationDetails.error = error
+    operationDetails.message = message
+}
+
 
 async function cleanUp(req, res, next){
     operationDetails = {}
@@ -89,5 +115,6 @@ function catchErrors(fn) {
 router.use(catchErrors(cleanUp))
 router.post('/signUp', catchErrors(signUp))
 router.post('/login', catchErrors(login))
+router.post('/feed', catchErrors(feed))
 
 module.exports = router

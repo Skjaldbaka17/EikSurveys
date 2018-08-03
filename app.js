@@ -2,13 +2,22 @@ require('dotenv').config();
 const express = require('express')
 const app = express()
 const router = require('./router');
-
+const path = require('path')
 const accessKey = process.env.ACCESS_KEY
+
+const showRouter = require('./showRouter')
 
 app.set('x-powered-by', false); //Security risk prevention.
 app.set('port', (process.env.PORT || 5000));
 app.use(express.urlencoded({ extended: true}));//Not necessary 'cause of multer upload.any!???
 app.use(express.json()) //Check node_modules/body-parser/lib/types/json.js for limit fix of how large the file can be!Not necessary 'cause of multer upload.any!???
+app.use(express.static(path.join(__dirname, 'public')));
+//For website!
+app.set('view engine', 'ejs');
+app.use('/', showRouter)
+
+
+
 app.use(accessAuthorized)
 app.use('/', router);
 
@@ -53,4 +62,5 @@ app.use(errorHandler);
 
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
+    console.log(`http://localhost:${app.get('port')}`)
   });

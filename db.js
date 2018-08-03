@@ -3,6 +3,7 @@ const { Client } = require('pg');
 
 const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
+const surveysDB = "eiksurveys"
 
 async function login(data){
     var message = {}
@@ -105,7 +106,94 @@ async function isEmailTaken(email){
     }
 }
 
+async function feed(userID){
+    var message = {}
+    var userInfo = await getUserInfo(userID)
+    if(!userInfo){
+        message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
+    } else if(!userInfo.firstsurveytaken) {
+        message.feed = await getFirstSurvey()
+        message.success = message.feed && message.feed.length > 0 ? true:false
+    } else {
+        message.feed = await getSurveyFeed(userInfo)
+        message.success = message.feed && message.feed.length > 0 ? true:false
+    }
+    return message
+}
 
-var database = {signUp, login}
+async function getFirstSurvey(){
+    var client = new Client({connectionString})
+    var query = `select * from ${surveysDB} where firstsurvey = true;`
+    var feed = []
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(rows[0]){
+            feed.push(rows[0])
+        }
+    }catch(error){
+        console.log(error)
+    }finally{
+        await client.end()
+        return feed
+    }
+}
+
+async function getSurveyFeed(userInfo){
+    var client = new Client({connectionString})
+    var query = `select * from ${surveysDB} where currentamount < maxamount and firstsurvey = false and 
+    not (${userInfo.userid} = any (takenby)) and
+    minage <= ${userInfo.age} and maxage >= ${userInfo.age} and 
+    ${userInfo.sex} = any (sex) and
+    ${userInfo.socialposition} = any (socialposition) and 
+    ${userInfo.location} = any (location);`
+    var feed = []
+
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        feed = rows
+    }catch(error){
+        console.log(error)
+    }finally{
+        await client.end()
+        return feed
+    }
+}
+
+async function getUserInfo(userID){
+    var client = new Client({connectionString})
+    var query = `Select * from ${userDBName} where userid = ${userID};`
+    var userInfo = {}
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            userInfo = null
+        } else {
+            userInfo = rows[0]
+        }
+    }catch(error){
+        console.log(error)
+        userInfo = null
+    }finally{
+        await client.end()
+        return userInfo
+    }
+}
+
+async function makeMessage(success, error, message){
+    var message = {
+        success: success,
+        error: error,
+        message: message
+    }
+    return message
+}
+
+var database = {signUp, login, feed}
 
 module.exports = database

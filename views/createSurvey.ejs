@@ -1,0 +1,153 @@
+<%- include('header') -%>
+
+<h1>Hello Creator!</h1>
+    <div>
+        <form action="/createIT" method="post" id="surveyForm">
+            <input type="text" name="name" placeholder="Nafn könnunar">
+            <div id="questions">
+                <button type="button" id="addQuestion">Bæta við spurningu</button>
+            </div>
+            <input type="number" name="price" placeholder="Verðlaun">
+            <input type="text" name="about" placeholder="Stutt lýsing">
+            <input type="number" name="maxamount" placeholder="Hámarksfjöldi">
+            <input type="number" name="minamount" placeholder="Lágmarksfjöldi">
+            <input type="number" name="maxage" placeholder="Hæsti aldur">
+            <input type="number" name="minage" placeholder="Minnsti aldur (lágmarki 15)">
+            <div id="sex">
+                <label for="male">Karl</label>
+                    <input type="checkbox" name="sex" id="man" value="Karl" checked>
+                <label for="female">Kona</label>
+                    <input type="checkbox" name="sex" id="woman" value="Kona" checked>
+                <label for="other">Annað</label>
+                    <input type="checkbox" name="sex" id="other" value="Annað" checked>
+            </div>
+            <div id="socialposition">
+                    <label for="elementary">Grunnskóla</label>
+                        <input type="checkbox" name="socialposition" value="Grunnskóla" checked>
+                    <label for="high">Menntaskóla</label>
+                        <input type="checkbox" name="socialposition" value="Menntaskóla" checked>
+                    <label for="college">Háskóla</label>
+                        <input type="checkbox" name="socialposition" value="Háskóla" checked>
+                    <label for="work">Vinnumarkaði</label>
+                        <input type="checkbox" name="socialposition" value="Vinnumarkaði" checked>
+                    <label for="other">Annað</label>
+                        <input type="checkbox" name="socialposition" value="Annað" checked>
+            </div>
+            <div id="location">
+                <label for="capital">Höfuðborgarsvæðið</label>
+                <img src="img/landið/hofudborgarsvaedid.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Höfuðborgarsvæðið" checked>
+                <label for="west">Vesturland</label>
+                <img src="img/landið/vesturland.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Vesturland" checked>
+                <label for="westFjords">Vestfirðir</label>
+                <img src="img/landið/vestfirdir.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Vestfirðir" checked>
+                <label for="northWest">Norð-vesturland</label>
+                <img src="img/landið/nordvesturland.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Norð-vesturland" checked>
+                <label for="north">Norðurland</label>
+                <img src="img/landið/nordurland.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Norðurland" checked>
+                <label for="east">Austurland</label>
+                <img src="img/landið/austurland.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Austurland" checked>
+                <label for="south">Suðurland</label>
+                <img src="img/landið/sudurland.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Suðurland" checked>
+                <label for="southWest">Suðvesturland</label>
+                <img src="img/landið/island.png" class="locationImg" alt="">
+                    <input type="checkbox" name="location" value="Suðvesturland" checked>
+            </div>
+            <button type="submit" id="submitSurveyButton">Búa til könnun</button>
+        </form>
+    </div>
+
+    <script>
+        var surveyForm = document.getElementById('surveyForm')
+        var addQuestion = document.getElementById('addQuestion')
+        var questions = document.getElementById('questions')
+        var questionNumber = 0
+
+        addQuestion.onclick = function() {
+            questionNumber++
+            var div = document.createElement('div')
+            div.class = "question"
+
+            var question = document.createElement('input')
+            question.type = "text"
+            question.name = `questions[${questionNumber}][question]`
+            question.placeholder = `Spurning ${questionNumber}`
+            question.class = "questionInput"
+
+            var addOption = document.createElement('button')
+            addOption.type = "button"
+            addOption.class = "addOptionButton"
+            addOption.title = "Bæta við valmöguleika"
+            var options = 0;
+            const q = questionNumber
+            addOption.onclick = function() {
+                var option = document.createElement('input')
+                option.type = "text"
+                option.name = `questions[${q}][answers]`
+                options++;
+                option.placeholder = `Valmöguleiki ${options}`
+                option.class = "option"
+
+                div.appendChild(option)
+            }
+            div.appendChild(question)
+            div.appendChild(addOption)
+            questions.appendChild(div)
+
+
+        }
+        
+        surveyForm.onsubmit = function() {
+                var checkBoxes = document.getElementsByName( 'sex' );
+                var socialPosCheckBoxes = document.getElementsByName('socialposition')
+                var locationCheckBoxes = document.getElementsByName('location')
+                var isSexChecked = false;
+                var isSocialPosChecked = false;
+                var isLocationChecked = false;
+                    for (var i = 0; i < checkBoxes.length; i++) {
+                        if ( checkBoxes[i].checked ) {
+                            isSexChecked = true;
+                            break;
+                        };
+                    };
+                    for(var i = 0; i < socialPosCheckBoxes.length; i++){
+                        if( socialPosCheckBoxes[i].checked ){
+                            isSocialPosChecked = true;
+                            break;
+                        }
+                    }
+                    for(var i = 0; i < locationCheckBoxes.length; i++){
+                        if ( locationCheckBoxes[i].checked ){
+                            isLocationChecked = true;
+                            break;
+                        }
+                    }
+                    if ( isSexChecked && isSocialPosChecked && isLocationChecked ) {
+                        alert("HERE")
+                        return true
+                        } else {
+                            alert( `Verður að velja amk einn valmöguleika hjá ${isSexChecked ? "":"\nkyni"}`+ 
+                            `${isSocialPosChecked ? "":"\nstöðu"}${isLocationChecked ? "":"\nstaðsetningu"}` );
+                            return false
+                        }   
+        }
+
+//         var xhr = new XMLHttpRequest();
+// xhr.open("POST", yourUrl, true);
+// xhr.setRequestHeader('Content-Type', 'application/json');
+// xhr.send(JSON.stringify({
+//     value: value
+// }));
+    </script>
+
+<%- include('footer') -%>
+<!--
+    socialposition varchar(255)[] NOT NULL DEFAULT '{}',
+    location varchar(255)[] NOT NULL DEFAULT '{}'
+  -->

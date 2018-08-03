@@ -1,0 +1,13 @@
+#surveyForm {
+    display: flex;
+    flex-direction: column; 
+}
+
+#surveyForm > input{
+    margin-top: 50px;
+}
+
+.locationImg {
+    height: 30px;
+    width: 35px;
+}
