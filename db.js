@@ -116,14 +116,18 @@ async function feed(userID){
         message.success = message.feed && message.feed.length > 0 ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo)
-        for(var i = 0; i < message.feed.length; i++){
-            if(message.feed[i].questions.length){
-                message.feed[i].numberOfQuestions = message.feed[i].questions.length
-            }
-        }
         message.success = message.feed && message.feed.length > 0 ? true:false
     }
     return message
+}
+
+async function numberOfQuestions(feed){
+    for(var i = 0; i < feed.length; i++){
+        if(feed[i].questions.length){
+            feed[i].numberOfQuestions = feed[i].questions.length
+        }
+    }
+    return feed
 }
 
 async function getFirstSurvey(){
@@ -141,7 +145,7 @@ async function getFirstSurvey(){
         console.log(error)
     }finally{
         await client.end()
-        return feed
+        return await numberOfQuestions(feed)
     }
 }
 
@@ -164,7 +168,7 @@ async function getSurveyFeed(userInfo){
         console.log(error)
     }finally{
         await client.end()
-        return feed
+        return await numberOfQuestions(feed)
     }
 }
 
