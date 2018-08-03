@@ -89,7 +89,7 @@
             userInputButton.type = "button"
             userInputButton.class = "optionsButton"
             userInputButton.innerHTML = "Skriflegt inlegg"
-
+            const q = questionNumber
             optionsButton.onclick = function () {
                 optionsButton.hidden = true
                 userInputButton.hidden = true
@@ -98,7 +98,7 @@
                 addOption.class = "addOptionButton"
                 addOption.innerHTML = "Bæta við valmöguleika"
                 var options = 0;
-                const q = questionNumber
+                
                 addOption.onclick = function() {
                         var option = document.createElement('input')
                         option.type = "text"
@@ -130,7 +130,7 @@
                 userInputButton.hidden = true
                 var input = document.createElement('input')
                 input.type = "text"
-                input.name = `questions[${questionNumber}][placeholder]`
+                input.name = `questions[${q}][placeholder]`
                 input.placeholder = "Lýsing á inleggi"
                 input.class = "placeholderInput"
             
@@ -140,7 +140,7 @@
 
                 var onlyNumbersAnswer = document.createElement('input')
                 onlyNumbersAnswer.type = "checkbox"
-                onlyNumbersAnswer.name = `questions[${questionNumber}][onlyNumbers]`
+                onlyNumbersAnswer.name = `questions[${q}][onlyNumbers]`
                 onlyNumbersAnswer.checked = false
                 onlyNumbersAnswer.value = true
 

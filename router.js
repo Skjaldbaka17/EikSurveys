@@ -91,7 +91,7 @@ async function feed(req, res){
         operationDetails.success = message.success
         operationDetails.error = message.error
         operationDetails.message = message.message
-        operationDetails.feed = message.feed
+        operationDetails.surveys = message.feed
     }
     res.send(operationDetails)
 }
