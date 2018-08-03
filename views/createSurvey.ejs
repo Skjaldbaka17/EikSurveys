@@ -80,24 +80,81 @@
             question.placeholder = `Spurning ${questionNumber}`
             question.class = "questionInput"
 
-            var addOption = document.createElement('button')
-            addOption.type = "button"
-            addOption.class = "addOptionButton"
-            addOption.title = "Bæta við valmöguleika"
-            var options = 0;
-            const q = questionNumber
-            addOption.onclick = function() {
-                var option = document.createElement('input')
-                option.type = "text"
-                option.name = `questions[${q}][answers]`
-                options++;
-                option.placeholder = `Valmöguleiki ${options}`
-                option.class = "option"
+            var optionsButton = document.createElement('button')
+            optionsButton.type = "button"
+            optionsButton.class = "optionsButton"
+            optionsButton.innerHTML = "Valmöguleikar"
 
-                div.appendChild(option)
+            var userInputButton = document.createElement('button')
+            userInputButton.type = "button"
+            userInputButton.class = "optionsButton"
+            userInputButton.innerHTML = "Skriflegt inlegg"
+
+            optionsButton.onclick = function () {
+                optionsButton.hidden = true
+                userInputButton.hidden = true
+                var addOption = document.createElement('button')
+                addOption.type = "button"
+                addOption.class = "addOptionButton"
+                addOption.innerHTML = "Bæta við valmöguleika"
+                var options = 0;
+                const q = questionNumber
+                addOption.onclick = function() {
+                        var option = document.createElement('input')
+                        option.type = "text"
+                        option.name = `questions[${q}][options]`
+                        options++;
+                        option.placeholder = `Valmöguleiki ${options}`
+                        option.class = "option"
+
+                        div.appendChild(option)
+                    }
+                var onlyOneAnswer = document.createElement('input')
+                onlyOneAnswer.type = "checkbox"
+                onlyOneAnswer.name = `questions[${q}][multipleAnswers]`
+                onlyOneAnswer.checked = true
+                onlyOneAnswer.value = false
+
+                var radioLabel = document.createElement('label')
+                radioLabel.innerHTML = "Aðeins eitt svar"
+                radioLabel.class = "radioLabel"
+
+                div.appendChild(radioLabel)
+                div.appendChild(onlyOneAnswer)
+                div.appendChild(addOption)
+                
             }
+
+            userInputButton.onclick = function() {
+                optionsButton.hidden = true
+                userInputButton.hidden = true
+                var input = document.createElement('input')
+                input.type = "text"
+                input.name = `questions[${questionNumber}][placeholder]`
+                input.placeholder = "Lýsing á inleggi"
+                input.class = "placeholderInput"
+            
+                var radioLabel = document.createElement('label')
+                radioLabel.innerHTML = "Aðeins tölur í svari"
+                radioLabel.class = "radioLabel"
+
+                var onlyNumbersAnswer = document.createElement('input')
+                onlyNumbersAnswer.type = "checkbox"
+                onlyNumbersAnswer.name = `questions[${questionNumber}][onlyNumbers]`
+                onlyNumbersAnswer.checked = false
+                onlyNumbersAnswer.value = true
+
+                div.appendChild(input)
+                div.appendChild(radioLabel)
+                div.appendChild(onlyNumbersAnswer)
+            }
+
+
+            
+
             div.appendChild(question)
-            div.appendChild(addOption)
+            div.appendChild(optionsButton)
+            div.appendChild(userInputButton)
             questions.appendChild(div)
 
 
