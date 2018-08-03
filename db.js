@@ -116,6 +116,11 @@ async function feed(userID){
         message.success = message.feed && message.feed.length > 0 ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo)
+        for(var i = 0; i < message.feed.length; i++){
+            if(message.feed[i].questions.length){
+                message.feed[i].numberOfQuestions = message.feed[i].questions.length
+            }
+        }
         message.success = message.feed && message.feed.length > 0 ? true:false
     }
     return message
