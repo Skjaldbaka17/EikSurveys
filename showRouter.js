@@ -45,6 +45,11 @@ async function createIT(req, res){
         await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
     } else {
         //Protext against sql-injections here! (xss, validate and sanitize!)
+        var questionsWorked = []
+        for(var i = 0; i < questions.length; i++){
+            questions[i].multipleAnswers = questions[i].multipleAnswers ? false:true
+            questions[i].onlyNumbers = questions[i].onlyNumbers ? true:false
+        }
         const data = {
             name: name,
             price: price,
