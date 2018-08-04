@@ -14,6 +14,8 @@ CREATE TABLE eikusers(
     surveystaken integer[] NOT NULL DEFAULT '{}',
     loggedin INTEGER NOT NULL DEFAULT 0,
     firstSurveyTaken Boolean not null default false,
+    prizemoneyearned Integer not null default 0,
+    prizemoneycashed integer not null default 0,
     DATECreated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     lastActivityDate TIMESTAMP NOT NULL DEFAULT now()
 );
