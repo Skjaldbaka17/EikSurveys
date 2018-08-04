@@ -51,16 +51,16 @@ async function createIT(req, res){
         }
         const data = {
             name: name,
-            prize: prize,
+            prize: Array.isArray(prize) ? prize:[prize] ,
             about: about,
             maxamount: maxamount,
             minamount: minamount,
             maxage: maxage,
             minage: minage,
-            questions: questions,
-            sex: sex,
-            socialposition: socialposition,
-            location: location,
+            questions: Array.isArray(questions) ? questions:[questions],
+            sex: Array.isArray(sex) ? sex: [sex],
+            socialposition: Array.isArray(socialposition) ? socialposition:[socialposition],
+            location: Array.isArray(location) ? location:[location],
             numberOfQuestions: questions.length
         }
         const message = await database.createSurvey(data)
