@@ -64,6 +64,30 @@ async function signUp(data){
     }
 }
 
+async function logout(userID){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = query = `update ${userDBName} set loggedin = loggedin-1, 
+    lastactivitydate = current_timestamp where userid = ${userID} returning *`
+
+    try{
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "No user with id: " + userID, "Getur ekki gert þetta í augnablikinu. Afsakið" 
+        + " óþægindin.")
+        } else {
+            message = await makeMessage(true, "", "")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "Kerfisvilla! Vinsamlegast láttu okkur vita og við lögum hana við fyrsta tækifæri.")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
 async function isEligibleForSignUp(data){
     var message = await isEmailTaken(data.email)
     if(message.success){
@@ -221,6 +245,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, feed, takeSurvey}
+var database = {signUp, login, logout, feed, takeSurvey}
 
 module.exports = database

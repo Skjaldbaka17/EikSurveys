@@ -76,6 +76,22 @@ async function hashPassword(password){
     return password
 }
 
+async function logout(req, res){
+    const {
+        body: {
+            userID = false
+        }
+    }  = req
+
+    if(!userID){
+        await makeOperationDetails(false, "Required Fields empty", "Getur ekki gert þetta í augnablikinu.")
+    } else {
+        var message = await db.logout(userID)
+        await makeOperationDetails(message.success, message.error, message.message)
+    }
+    res.send(operationDetails)
+}
+
 async function feed(req, res){
     //Have send last survey, and later last programTest (or whatever the 2nd section is) that the app got from the server!
     const {
@@ -135,6 +151,7 @@ function catchErrors(fn) {
 router.use(catchErrors(cleanUp))
 router.post('/signUp', catchErrors(signUp))
 router.post('/login', catchErrors(login))
+router.post('/logout', catchErrors(logout))
 router.post('/feed', catchErrors(feed))
 router.post('/takeSurvey', catchErrors(takeSurvey))
 
