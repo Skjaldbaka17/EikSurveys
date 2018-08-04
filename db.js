@@ -291,6 +291,7 @@ async function updateSurvey(userID, surveyID){
 }
 
 async function saveAnswers(answers, survey, userID){
+    console.log("HERE10")
     if(survey.firstsurvey){
         return await saveFirstSurvey(answers, survey, userID)
     }
@@ -338,7 +339,7 @@ async function saveFirstSurvey(answers, survey, userID){
     var query = `Update ${userDBName} set name = '${answers[0].answer[0]}',
     ssn = ${answers[1].answer[0]}, sex = '${answers[2].answer[0]}', socialposition = '${answers[3].answer[0]}',
     address = '${answers[4].answer[0]}', phone = '${answers[5].answer[0]}', phoneid = '${answers[6].answer[0]}'
-    where userid = ${usderID} returning *`
+    where userid = ${userID} returning *`
 console.log(query)
     try{
         await client.connect()
