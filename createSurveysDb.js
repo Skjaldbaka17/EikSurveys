@@ -10,9 +10,9 @@ async function createSurvey(data){
     var answersTableName = await onlyLetters(data.name + "_" + data.price + "_" + randomInt)
     var client = new Client({connectionString})
     var query = `insert into ${surveysDB} (name, price, about, questions, maxamount, minamount, maxage, 
-    minage, sex, socialposition, answerstable, location) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *`
+    minage, sex, socialposition, answerstable, location, mumberofquestions) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *`
     var values = [data.name , data.price, data.about, JSON.stringify(data.questions), data.maxamount, data.minamount, data.maxage, data.minage,
-    data.sex, data.socialposition, answersTableName, data.location]
+    data.sex, data.socialposition, answersTableName, data.location, data.numberOfQuestions]
     console.log(query)
     try{
         await client.connect()

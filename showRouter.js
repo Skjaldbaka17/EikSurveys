@@ -60,7 +60,8 @@ async function createIT(req, res){
             questions: questions,
             sex: sex,
             socialposition: socialposition,
-            location: location
+            location: location,
+            numberOfQuestions: questions.length
         }
         const message = await database.createSurvey(data)
         await makeOperationDetails(message.success, message.error, message.message)

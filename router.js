@@ -96,6 +96,26 @@ async function feed(req, res){
     res.send(operationDetails)
 }
 
+async function takeSurvey(req, res){
+    const {
+        body: {
+            userID = false,
+            surveyID = false
+        }
+    } = req 
+
+    if(!(userID&&surveyID)){
+        await makeOperationDetails(false, "Required Fields empty", "Villa í kerfinu! Vinsamlegast láttu okkur vita og við lögum villuna.")
+    }else{
+        var message = await db.takeSurvey(userID, surveyID)
+        operationDetails.success = message.success
+        operationDetails.error = message.error
+        operationDetails.message = message.message
+        operationDetails.survey = message.survey
+    }
+    res.send(operationDetails)
+}
+
 async function makeOperationDetails(success, error, message){
     operationDetails.success = success
     operationDetails.error = error
@@ -116,5 +136,6 @@ router.use(catchErrors(cleanUp))
 router.post('/signUp', catchErrors(signUp))
 router.post('/login', catchErrors(login))
 router.post('/feed', catchErrors(feed))
+router.post('/takeSurvey', catchErrors(takeSurvey))
 
 module.exports = router

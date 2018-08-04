@@ -121,15 +121,6 @@ async function feed(userID){
     return message
 }
 
-async function numberOfQuestions(feed){
-    for(var i = 0; i < feed.length; i++){
-        if(feed[i].questions.length){
-            feed[i].numberOfQuestions = feed[i].questions.length
-        }
-    }
-    return feed
-}
-
 async function getFirstSurvey(){
     var client = new Client({connectionString})
     var query = `select * from ${surveysDB} where firstsurvey = true;`
@@ -145,7 +136,7 @@ async function getFirstSurvey(){
         console.log(error)
     }finally{
         await client.end()
-        return await numberOfQuestions(feed)
+        return feed
     }
 }
 
@@ -168,7 +159,34 @@ async function getSurveyFeed(userInfo){
         console.log(error)
     }finally{
         await client.end()
-        return await numberOfQuestions(feed)
+        return await feed
+    }
+}
+
+async function takeSurvey(userID, surveyID){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `Update ${surveysDB} set viewedby = array_append(viewedby, ${userID}) where surveyid = ${surveyID}
+    returning *;`
+
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "No survey with this ID", "Ekki er hægt að taka þessa könnun lengur. Takk fyrir"
+        + " að sýna henni áhuga og afsakaðu óþægindin.")
+        } else {
+            message = await makeMessage(true, "", "Allt heppnaðist")
+            message.survey = rows[0]
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "Því miður liggur vefþjónninn niðri í einhvern tíma. Endilega reyndu"
+    + " aftur síðar!")
+    }finally{
+        await client.end()
+        return message
     }
 }
 
@@ -203,6 +221,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, feed}
+var database = {signUp, login, feed, takeSurvey}
 
 module.exports = database
