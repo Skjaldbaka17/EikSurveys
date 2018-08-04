@@ -69,7 +69,7 @@ async function logout(userID){
     var message = {}
     var client = new Client({connectionString})
     var query = `update ${userDBName} set loggedin = loggedin-1, 
-    lastactivitydate = current_timestamp where userid = ${userID} returning *`
+    lastactivitydate = current_timestamp where userid = ${userID} returning *;`
     console.log("Logout:", query)
     try{
         console.log("Try8ing")
