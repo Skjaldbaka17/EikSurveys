@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Client } = require('pg');
+const { onlyLetters } = require('./regex')
 
 const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
@@ -214,6 +215,116 @@ async function takeSurvey(userID, surveyID){
     }
 }
 
+async function submitAnswers(userID, survey, answers){
+    var message = await saveAnswers()
+    if(message.success){
+        updateSurveyAndUser(userID, survey)
+        return message
+    } else {
+        return message
+    }
+}
+
+async function updateSurveyAndUser(userID, survey){
+    var mess = await updateUser(userID, survey.prize, survey.surveyid, survey.firstsurvey)
+    if(!mess.success){
+        console.log("ShitVillaaaa!!!!")
+    }
+    mess = await updateSurvey(userID, survey.surveyid)
+    if(!mess.success){
+        console.log("SHIIIITTTVILLLANUMER222222")
+    }
+}
+
+async function updateUser(userID, prizeMoneyEarned, surveyID, firstsurvey){
+    //Keep prize money earned as an array???
+    var message = {}
+    var client = new Client({})
+    var query = `Update ${userDBName} set ${firstsurvey ? "firstsurveytaken = true , ":""}
+    prizemoneyearned = prizemoneyearned + ${prizeMoneyEarned}, 
+    surveystaken = array_append(surveystaken, ${surveyID}) where userid = ${userID} returning *`
+
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "Shit, updateUserFailed", "Fooookkk!")
+        }else{
+            message = await makeMessage(true, "", "")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "LAga!")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
+async function updateSurvey(userID, surveyID){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `Update ${surveysDB} set takenby = array_append(takenby, ${userID}),
+    currentamount = currentamount + 1 where surveyid = ${surveyID}`
+
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "Error í updateSurvey", "Eitthvað vesen í gangi! Reyndu aftur síðar.")
+        } else {
+            message = await makeMessage(true, "", "")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
+async function saveAnswers(answers, survey, userID){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `Insert into ${survey.answerstable} (surveyid, userid, `
+    var values = [survey.surveyid, userID]
+    var value = "$1, $2,"
+    for(var i = 0; i < answers.length; i++){
+        values.push(answers[i].answer)
+        query += await onlyLetters(answers[i].question)
+        value += `$${i+3}`
+        if(i < answers.length-1){
+            query += ","
+            value += ","
+        } else {
+            value += ")"
+        }
+    }
+    query += ` VALUES (${value}) returning *`
+    console.log("AnswersTable:", query)
+
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "Could not insert answers!", "Náði ekki að vista svörin þín. Reyndu aftur síðar.")
+        } else {
+            message = await makeMessage(true, "" ,"")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, "Could not insert answers!", "Náði ekki að vista svörin þín. Reyndu aftur síðar."
+    + " Ef það virkar ekki þá heldur hafðu samband við okkur og við skoðum orsökina.")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
 async function getUserInfo(userID){
     var client = new Client({connectionString})
     var query = `Select * from ${userDBName} where userid = ${userID};`
@@ -245,6 +356,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey}
+var database = {signUp, login, logout, feed, takeSurvey, submitAnswers}
 
 module.exports = database

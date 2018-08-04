@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Client } = require('pg');
+const { onlyLetters } = require('./regex')
 
 const connectionString = process.env.DATABASE_URL;
 const surveysDB = "eiksurveys"
@@ -67,10 +68,6 @@ async function createAnswersTable(questions, name){
         await client.end()
         return message
     }
-}
-
-async function onlyLetters(string){
-    return string.replace(/[^\wðþóæöáéúí_]/gi, '')
 }
 
 async function makeMessage(success, error, message){
