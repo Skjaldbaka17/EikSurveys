@@ -308,13 +308,12 @@ async function saveAnswers(answers, survey, userID){
             query += ")"
         }
     }
-    console.log("HERE18")
     query += ` VALUES (${value}) returning *`
     console.log("AnswersTable:", query)
 
     try{
         await client.connect()
-        const result = await client.query(query)
+        const result = await client.query(query, values)
         const { rows } = result
         if(!rows[0]){
             message = await makeMessage(false, "Could not insert answers!", "Náði ekki að vista svörin þín. Reyndu aftur síðar.")
