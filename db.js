@@ -170,9 +170,9 @@ async function getSurveyFeed(userInfo){
     var query = `select * from ${surveysDB} where currentamount < maxamount and firstsurvey = false and 
     not (${userInfo.userid} = any (takenby)) and
     minage <= ${userInfo.age} and maxage >= ${userInfo.age} and 
-    ${userInfo.sex} = any (sex) and
-    ${userInfo.socialposition} = any (socialposition) and 
-    ${userInfo.location} = any (location);`
+    '${userInfo.sex}' = any (sex) and
+    '${userInfo.socialposition}' = any (socialposition) and 
+    '${userInfo.location}' = any (location);`
     var feed = []
     console.log("GetSurveyFeed:", query)
 
