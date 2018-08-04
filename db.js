@@ -294,12 +294,9 @@ async function updateSurvey(userID, surveyID){
 async function saveAnswers(answers, survey, userID){
     var message = {}
     var client = new Client({connectionString})
-    console.log("HERE15")
     var query = `Insert into ${survey.answerstable} (surveyid, userid, `
-    console.log("HERE16")
     var values = [survey.surveyid, userID]
     var value = "$1, $2,"
-    console.log("HERE17")
     for(var i = 0; i < answers.length; i++){
         values.push(answers[i].answer)
         query += await onlyLetters(answers[i].question)
@@ -308,7 +305,7 @@ async function saveAnswers(answers, survey, userID){
             query += ","
             value += ","
         } else {
-            value += ")"
+            query += ")"
         }
     }
     console.log("HERE18")
