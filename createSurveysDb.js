@@ -48,7 +48,7 @@ async function createAnswersTable(questions, name){
             surveyid integer not null,
             userid integer not null,`
         for(var i = 0; i < questions.length; i++){
-            query += ( await onlyLetters(questions[i].question)) + " varchar(255)"
+            query += ( await onlyLetters(questions[i].question)) + " varchar(255)[]"
             if(i < questions.length - 1){
                 query += ","
             } else {query += " )"}
