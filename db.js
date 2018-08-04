@@ -216,11 +216,16 @@ async function takeSurvey(userID, surveyID){
 }
 
 async function submitAnswers(userID, survey, answers){
+    console.log("HERE4")
     var message = await saveAnswers()
+    console.log("HERE5")
     if(message.success){
+        console.log("HERE6")
         updateSurveyAndUser(userID, survey)
+        console.log("HERE7")
         return message
     } else {
+        console.log("HERE8")
         return message
     }
 }

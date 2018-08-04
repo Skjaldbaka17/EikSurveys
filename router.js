@@ -140,13 +140,15 @@ async function submitAnswers(req, res){
             answers = false
         }
     } = req
-
+console.log("HERE1")
     if(!(userID&&survey&&answers) || (!survey.answerstable) || (!answers[0]) || 
     (!answers[0].question) || (!answers[0].answer) || (!survey.surveyid)){
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
+        console.log("HERE2")
         var message = await db.submitAnswers(userID, survey, answers)
         await makeOperationDetails(message.success, message.error, message.message)
+        console.log("HERE3")
     }
     res.send(operationDetails)
 }
