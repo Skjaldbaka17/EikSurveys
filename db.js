@@ -244,7 +244,7 @@ async function updateSurveyAndUser(userID, survey){
 async function updateUser(userID, prizeMoneyEarned, surveyID, firstsurvey){
     //Keep prize money earned as an array???
     var message = {}
-    var client = new Client({})
+    var client = new Client({connectionString})
     var query = `Update ${userDBName} set ${firstsurvey ? "firstsurveytaken = true , ":""}
     prizemoneyearned = prizemoneyearned + ${prizeMoneyEarned}, 
     surveystaken = array_append(surveystaken, ${surveyID}) where userid = ${userID} returning *`
@@ -271,7 +271,7 @@ async function updateSurvey(userID, surveyID){
     var message = {}
     var client = new Client({connectionString})
     var query = `Update ${surveysDB} set takenby = array_append(takenby, ${userID}),
-    currentamount = currentamount + 1 where surveyid = ${surveyID}`
+    currentamount = currentamount + 1 where surveyid = ${surveyID} returning *`
     console.log("UpdateSurvey:", query)
     try{
         await client.connect()
