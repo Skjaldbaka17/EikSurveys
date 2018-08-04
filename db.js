@@ -12,7 +12,7 @@ async function login(data){
     await client.connect()
 
     try{
-        var query = query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
+        var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
         const result = await client.query(query)
         const {rows} = result
         if(!rows[0]){
