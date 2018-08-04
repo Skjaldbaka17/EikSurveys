@@ -68,13 +68,14 @@ async function signUp(data){
 async function logout(userID){
     var message = {}
     var client = new Client({connectionString})
-    var query = query = `update ${userDBName} set loggedin = loggedin-1, lastactivitydate = current_timestamp where userid = ${userID} returning *`
+    var query = `update ${userDBName} set loggedin = loggedin-1, lastactivitydate = current_timestamp where userid = ${userID} returning *`
     // var query =`update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
 
     console.log("Logout:", query)
     try{
         console.log("Try8ing")
-        const result = await client.query(query)
+        await client.connect()
+        const result = await client.query(query);
         console.log("Out of it")
         const { rows } = result
         console.log("HERE1")
