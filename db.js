@@ -174,6 +174,7 @@ async function getSurveyFeed(userInfo){
     ${userInfo.socialposition} = any (socialposition) and 
     ${userInfo.location} = any (location);`
     var feed = []
+    console.log("GetSurveyFeed:", query)
 
     try{
         await client.connect()
@@ -216,9 +217,7 @@ async function takeSurvey(userID, surveyID){
 }
 
 async function submitAnswers(userID, survey, answers){
-    console.log("HERE4")
     var message = await saveAnswers(answers, survey, userID)
-    console.log("HERE5")
     if(message.success){
         console.log("HERE6")
         updateSurveyAndUser(userID, survey)
@@ -292,6 +291,9 @@ async function updateSurvey(userID, surveyID){
 }
 
 async function saveAnswers(answers, survey, userID){
+    if(survey.firstsurvey){
+        return await saveFirstSurvey(answers, survey, userID)
+    }
     var message = {}
     var client = new Client({connectionString})
     var query = `Insert into ${survey.answerstable} (surveyid, userid, `
@@ -324,6 +326,33 @@ async function saveAnswers(answers, survey, userID){
         console.log(error)
         message = await makeMessage(false, "Could not insert answers!", "Náði ekki að vista svörin þín. Reyndu aftur síðar."
     + " Ef það virkar ekki þá heldur hafðu samband við okkur og við skoðum orsökina.")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
+async function saveFirstSurvey(answers, survey, userID){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `Update ${userDBName} set name = '${answers[0].answer[0]}',
+    ssn = ${answers[1].answer[0]}, sex = '${answers[2].answer[0]}', socialposition = '${answers[3].answer[0]}',
+    address = '${answers[4].answer[0]}', phone = '${answers[5].answer[0]}', phoneid = '${answers[6].answer[0]}'
+    where userid = ${usderID} returning *`
+console.log(query)
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "No user with this ID. SaveFirstSurvey.", "Vinsamlegast loggaðu þig út. Náðu í nýja"
+        + " uppfærslu af appinu og prófaðu aftur.")
+        } else {
+            message = await makeMessage(true, "", "")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "Kerfisvilla!")
     }finally{
         await client.end()
         return message
