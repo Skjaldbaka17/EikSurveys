@@ -68,12 +68,12 @@ async function signUp(data){
 async function logout(userID){
     var message = {}
     var client = new Client({connectionString})
-    var query = query = `update ${userDBName} set loggedin = loggedin-1, 
+    var query = `update ${userDBName} set loggedin = loggedin-1, 
     lastactivitydate = current_timestamp where userid = ${userID} returning *`
-
     try{
         const result = await client.query(query)
         const { rows } = result
+        console.log("HERE1")
         if(!rows[0]){
             message = await makeMessage(false, "No user with id: " + userID, "Getur ekki gert þetta í augnablikinu. Afsakið" 
         + " óþægindin.")
