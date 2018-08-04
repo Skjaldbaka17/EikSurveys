@@ -259,7 +259,7 @@ async function updateUser(userID, prizeMoneyEarned, surveyID, firstsurvey){
             message = await makeMessage(true, "", "")
         }
     }catch(error){
-        console.log(error)
+        console.log("UpdateUserError:", error)
         message = await makeMessage(false, error, "LAga!")
     }finally{
         await client.end()
@@ -271,7 +271,7 @@ async function updateSurvey(userID, surveyID){
     var message = {}
     var client = new Client({connectionString})
     var query = `Update ${surveysDB} set takenby = array_append(takenby, ${userID}),
-    currentamount = currentamount + 1 where surveyid = ${surveyID} returning *`
+    currentamount = currentamount+1 where surveyid = ${surveyID} returning *`
     console.log("UpdateSurvey:", query)
     try{
         await client.connect()
@@ -283,7 +283,7 @@ async function updateSurvey(userID, surveyID){
             message = await makeMessage(true, "", "")
         }
     }catch(error){
-        console.log(error)
+        console.log("UpdateSurveyError:", error)
         message = await makeMessage(false, error, "")
     }finally{
         await client.end()
