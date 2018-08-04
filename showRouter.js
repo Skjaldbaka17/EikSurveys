@@ -28,7 +28,7 @@ async function createIT(req, res){
     const {
         body: {
             name = false,
-            price = false,
+            prize = false,
             about = false,
             maxamount = false,
             minamount = false,
@@ -51,7 +51,7 @@ async function createIT(req, res){
         }
         const data = {
             name: name,
-            price: price,
+            prize: prize,
             about: about,
             maxamount: maxamount,
             minamount: minamount,
