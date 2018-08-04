@@ -8,7 +8,7 @@ const surveysDB = "eiksurveys"
 async function createSurvey(data){
     var message = {}
     var randomInt = getRandomInt(0, 1000001)
-    var answersTableName = await onlyLetters(data.name + "_" + data.price + "_" + randomInt)
+    var answersTableName = await onlyLetters(data.name + "_" + data.prize + "_" + randomInt)
     var client = new Client({connectionString})
     var query = `insert into ${surveysDB} (name, prize, about, questions, maxamount, minamount, maxage, 
     minage, sex, socialposition, answerstable, location, numberofquestions) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *`
