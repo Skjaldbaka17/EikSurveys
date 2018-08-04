@@ -51,7 +51,7 @@ async function createIT(req, res){
         }
         const data = {
             name: name,
-            prize: Array.isArray(prize) ? prize:[prize] ,
+            prize: prize,
             about: about,
             maxamount: maxamount,
             minamount: minamount,
