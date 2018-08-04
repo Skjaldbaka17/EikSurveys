@@ -70,6 +70,7 @@ async function logout(userID){
     var client = new Client({connectionString})
     var query = `update ${userDBName} set loggedin = loggedin-1, 
     lastactivitydate = current_timestamp where userid = ${userID} returning *`
+    console.log("Logout:", query)
     try{
         const result = await client.query(query)
         const { rows } = result
@@ -85,6 +86,7 @@ async function logout(userID){
         message = await makeMessage(false, error, "Kerfisvilla! Vinsamlegast láttu okkur vita og við lögum hana við fyrsta tækifæri.")
     }finally{
         await client.end()
+        console.log("End of logout!")
         return message
     }
 }
