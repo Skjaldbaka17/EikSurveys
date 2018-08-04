@@ -141,7 +141,7 @@ async function feed(userID){
         message.success = message.feed && message.feed.length > 0 ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo)
-        message.success = message.feed && message.feed.length > 0 ? true:false
+        message.success = true
     }
     return message
 }

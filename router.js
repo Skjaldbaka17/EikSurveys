@@ -173,5 +173,6 @@ router.post('/login', catchErrors(login))
 router.post('/logout', catchErrors(logout))
 router.post('/feed', catchErrors(feed))
 router.post('/takeSurvey', catchErrors(takeSurvey))
+router.post('/submitAnswers', catchErrors(submitAnswers))
 
 module.exports = router
