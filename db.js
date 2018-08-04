@@ -72,7 +72,9 @@ async function logout(userID){
     lastactivitydate = current_timestamp where userid = ${userID} returning *`
     console.log("Logout:", query)
     try{
+        console.log("Try8ing")
         const result = await client.query(query)
+        console.log("Out of it")
         const { rows } = result
         console.log("HERE1")
         if(!rows[0]){
