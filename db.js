@@ -217,7 +217,7 @@ async function takeSurvey(userID, surveyID){
 
 async function submitAnswers(userID, survey, answers){
     console.log("HERE4")
-    var message = await saveAnswers()
+    var message = await saveAnswers(answers, survey, userID)
     console.log("HERE5")
     if(message.success){
         console.log("HERE6")
