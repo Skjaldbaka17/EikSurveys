@@ -344,7 +344,7 @@ async function saveFirstSurvey(answers, survey, userID){
     var client = new Client({connectionString})
     var query = `Update ${userDBName} set name = '${answers[0].answer[0]}',
     ssn = ${answers[1].answer[0]}, age = ${await getAgeFromSSN(answers[1].answer[0])}, 
-    location = ${await getLocationFrom(answers[4].answer[0])}, sex = '${answers[2].answer[0]}', 
+    location = '${await getLocationFrom(answers[4].answer[0])}', sex = '${answers[2].answer[0]}', 
     socialposition = '${answers[3].answer[0]}', address = '${answers[4].answer[0]}', 
     phone = '${answers[5].answer[0]}', phoneid = '${answers[6].answer[0]}'
     where userid = ${userID} returning *`
