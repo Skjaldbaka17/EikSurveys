@@ -137,7 +137,7 @@ async function isEmailTaken(email){
     }
 }
 
-async function feed(userID, surveyID){
+async function feed(userID, surveyID, testID){
     var message = {}
     var userInfo = await getUserInfo(userID)
     if(!userInfo){
@@ -147,9 +147,17 @@ async function feed(userID, surveyID){
         message.success = message.feed && message.feed.length > 0 ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo, surveyID)
-        message.success = true
+        if(message.feed.length > 0){message.success = true}
+        else {
+            message.tests = await getTestsFeed(userInfo, testID)
+            message.success = true
+        }
     }
     return message
+}
+
+async function getTestsFeed(userInfo, testID){
+    return []
 }
 
 async function getFirstSurvey(){

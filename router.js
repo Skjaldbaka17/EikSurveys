@@ -97,18 +97,20 @@ async function feed(req, res){
     const {
         body: {
             userID = false,
-            surveyID = -1
+            surveyID = -1,
+            testID = -1
         }
     } = req
 
     if(!userID){
         await makeOperationDetails(false, "RequiredFieldsEmpty", "Þú ert ekki með heimild fyrir þessum gögnum")
     } else {
-        var message = await db.feed(userID, surveyID)
+        var message = await db.feed(userID, surveyID, testID)
         operationDetails.success = message.success
         operationDetails.error = message.error
         operationDetails.message = message.message
         operationDetails.surveys = message.feed
+        operationDetails.tests = message.tests
     }
     res.send(operationDetails)
 }
