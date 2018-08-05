@@ -343,8 +343,10 @@ async function saveFirstSurvey(answers, survey, userID){
     var message = {}
     var client = new Client({connectionString})
     var query = `Update ${userDBName} set name = '${answers[0].answer[0]}',
-    ssn = ${answers[1].answer[0]}, sex = '${answers[2].answer[0]}', socialposition = '${answers[3].answer[0]}',
-    address = '${answers[4].answer[0]}', phone = '${answers[5].answer[0]}', phoneid = '${answers[6].answer[0]}'
+    ssn = ${answers[1].answer[0]}, age = ${await getAgeFromSSN(answers[1].answer[0])}, 
+    location = ${await getLocationFrom(answers[4].answer[0])}, sex = '${answers[2].answer[0]}', 
+    socialposition = '${answers[3].answer[0]}', address = '${answers[4].answer[0]}', 
+    phone = '${answers[5].answer[0]}', phoneid = '${answers[6].answer[0]}'
     where userid = ${userID} returning *`
 console.log(query)
     try{
@@ -365,6 +367,36 @@ console.log(query)
         return message
     }
 }
+
+async function getLocationFrom(address){
+    return 'Höfuðborgarsvæðið'
+}
+
+async function getAgeFromSSN(ssn){
+        var day = parseInt(ssn/100000000)
+        var dropped = (ssn%100000000)
+        var month = parseInt(dropped/1000000)
+        dropped = (dropped%1000000)
+        var year = parseInt(dropped/10000)
+        var checkNumber = parseInt((ssn%100)/10)
+        var century = ssn%10
+        if(century < 9){
+            year += 2000 + century*100
+        } else {
+            year += 1000 + century*100
+        }
+        var date = new Date()
+        var age = date.getFullYear() - year
+        var birthDateThisYear = new Date(date.getFullYear() , month-1, day)
+        if(date - birthDateThisYear < 0){
+            age -= 1
+        }
+        return age
+}
+
+async function isNumeric(n){
+    return (typeof n == "number" && !isNaN(n));
+  }
 
 async function getUserInfo(userID){
     var client = new Client({connectionString})
