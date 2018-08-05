@@ -56,7 +56,7 @@ async function createIT(req, res){
             maxamount: maxamount,
             minamount: minamount,
             maxage: maxage,
-            minage: minage,
+            minage: minage < 15 ? 15:minage,
             questions: Array.isArray(questions) ? questions:[questions],
             sex: Array.isArray(sex) ? sex: [sex],
             socialposition: Array.isArray(socialposition) ? socialposition:[socialposition],

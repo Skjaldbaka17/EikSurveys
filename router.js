@@ -96,14 +96,15 @@ async function feed(req, res){
     //Have send last survey, and later last programTest (or whatever the 2nd section is) that the app got from the server!
     const {
         body: {
-            userID = false
+            userID = false,
+            surveyID = -1
         }
     } = req
 
     if(!userID){
         await makeOperationDetails(false, "RequiredFieldsEmpty", "Þú ert ekki með heimild fyrir þessum gögnum")
     } else {
-        var message = await db.feed(userID)
+        var message = await db.feed(userID, surveyID)
         operationDetails.success = message.success
         operationDetails.error = message.error
         operationDetails.message = message.message

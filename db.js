@@ -137,7 +137,7 @@ async function isEmailTaken(email){
     }
 }
 
-async function feed(userID){
+async function feed(userID, surveyID){
     var message = {}
     var userInfo = await getUserInfo(userID)
     if(!userInfo){
@@ -146,7 +146,7 @@ async function feed(userID){
         message.feed = await getFirstSurvey()
         message.success = message.feed && message.feed.length > 0 ? true:false
     } else {
-        message.feed = await getSurveyFeed(userInfo)
+        message.feed = await getSurveyFeed(userInfo, surveyID)
         message.success = true
     }
     return message
@@ -171,14 +171,16 @@ async function getFirstSurvey(){
     }
 }
 
-async function getSurveyFeed(userInfo){
+async function getSurveyFeed(userInfo, surveyID){
     var client = new Client({connectionString})
-    var query = `select * from ${surveysDB} where currentamount < maxamount and firstsurvey = false and 
+    var query = `select * from ${surveysDB} where surveyid > ${surveyID} and 
+    currentamount < maxamount and firstsurvey = false and 
     not (${userInfo.userid} = any (takenby)) and
     minage <= ${userInfo.age} and maxage >= ${userInfo.age} and 
     '${userInfo.sex}' = any (sex) and
     '${userInfo.socialposition}' = any (socialposition) and 
-    '${userInfo.location}' = any (location);`
+    '${userInfo.location}' = any (location)
+    order by datecreated limit 10;`
     var feed = []
     console.log("GetSurveyFeed:", query)
 
