@@ -158,6 +158,7 @@ async function feed(userID, surveyID, testID){
             message.success = true
         }
     }
+    message.userInfo = userInfo
     return message
 }
 
