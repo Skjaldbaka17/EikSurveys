@@ -47,6 +47,8 @@ async function createAnswersTable(questions, name){
         var query = `Create table ${name}(
             surveyid integer not null,
             userid integer not null,`
+
+            console.log("Query For answersTable: ", query)
         for(var i = 0; i < questions.length; i++){
             query += ( await onlyLetters(questions[i].question)) + " varchar(255)[]"
             if(i < questions.length - 1){
