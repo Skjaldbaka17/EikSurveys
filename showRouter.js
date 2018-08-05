@@ -44,13 +44,15 @@ async function createIT(req, res){
         console.log("Ekki nægar upplýsingar")
         await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
     } else {
+        console.log("HERE1")
         //Protext against sql-injections here! (xss, validate and sanitize!)
-        questions = Array.isArray(questions) ? questions:[questions]
-        for(var i = 0; i < questions.length; i++){
-            questions[i].multipleAnswers = questions[i].multipleAnswers ? false:true
-            questions[i].onlyNumbers = questions[i].onlyNumbers ? true:false
-            questions[i].options = Array.isArray(questions[i].options) ? questions[i].options:[questions[i].options]
+        var theQuestions = Array.isArray(questions) ? questions:[questions]
+        for(var i = 0; i < theQuestions.length; i++){
+            theQuestions[i].multipleAnswers = theQuestions[i].multipleAnswers ? false:true
+            theQuestions[i].onlyNumbers = theQuestions[i].onlyNumbers ? true:false
+            theQuestions[i].options = Array.isArray(theQuestions[i].options) ? theQuestions[i].options:[theQuestions[i].options]
         }
+        console.log("HERE2")
         const data = {
             name: name,
             prize: prize,
@@ -59,12 +61,13 @@ async function createIT(req, res){
             minamount: minamount,
             maxage: maxage,
             minage: minage < 15 ? 15:minage,
-            questions: questions,
+            questions: theQuestions,
             sex: Array.isArray(sex) ? sex: [sex],
             socialposition: Array.isArray(socialposition) ? socialposition:[socialposition],
             location: Array.isArray(location) ? location:[location],
             numberOfQuestions: questions.length
         }
+        console.log("HERE3")
         const message = await database.createSurvey(data)
         await makeOperationDetails(message.success, message.error, message.message)
     }
