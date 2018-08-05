@@ -45,9 +45,11 @@ async function createIT(req, res){
         await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
     } else {
         //Protext against sql-injections here! (xss, validate and sanitize!)
+        questions = Array.isArray(questions) ? questions:[questions]
         for(var i = 0; i < questions.length; i++){
             questions[i].multipleAnswers = questions[i].multipleAnswers ? false:true
             questions[i].onlyNumbers = questions[i].onlyNumbers ? true:false
+            questions[i].options = Array.isArray(questions[i].options) ? questions[i].options:[questions[i].options]
         }
         const data = {
             name: name,
@@ -57,7 +59,7 @@ async function createIT(req, res){
             minamount: minamount,
             maxage: maxage,
             minage: minage < 15 ? 15:minage,
-            questions: Array.isArray(questions) ? questions:[questions],
+            questions: questions,
             sex: Array.isArray(sex) ? sex: [sex],
             socialposition: Array.isArray(socialposition) ? socialposition:[socialposition],
             location: Array.isArray(location) ? location:[location],
