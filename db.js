@@ -147,9 +147,14 @@ async function feed(userID, surveyID, testID){
         message.success = message.feed && message.feed.length > 0 ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo, surveyID)
-        if(message.feed.length > 0){message.success = true}
+        if(message.feed.length > 0){
+            message.endOfSurveyfeed = false
+            message.endOfTestsFeed = false
+            message.success = true}
         else {
+            message.endOfSurveyfeed = true
             message.tests = await getTestsFeed(userInfo, testID)
+            message.endOfTestsFeed = message.tests.count > 0 ? false:true
             message.success = true
         }
     }
