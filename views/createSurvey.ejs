@@ -1,11 +1,12 @@
 <%- include('header') -%>
 
-<h1>Hello Creator!</h1>
-    <div>
+<h1>Búa til könnun</h1>
+    <div id="surveyDiv">
         <form action="/createIT" method="post" id="surveyForm">
             <input type="text" name="name" placeholder="Nafn könnunar">
-            <div id="questions">
+            <div id="questionsDiv">
                 <button type="button" id="addQuestion">Bæta við spurningu</button>
+                <div id="questions"></div>
             </div>
             <input type="number" name="prize" placeholder="Verðlaun">
             <input type="text" name="about" placeholder="Stutt lýsing">
@@ -14,14 +15,20 @@
             <input type="number" name="maxage" placeholder="Hæsti aldur">
             <input type="number" name="minage" placeholder="Minnsti aldur (lágmarki 15)">
             <div id="sex">
-                <label for="male">Karl</label>
-                    <input type="checkbox" name="sex" id="man" value="Karl" checked>
-                <label for="female">Kona</label>
-                    <input type="checkbox" name="sex" id="woman" value="Kona" checked>
-                <label for="other">Annað</label>
-                    <input type="checkbox" name="sex" id="other" value="Annað" checked>
+                <h4>Kyn svaranda</h5>
+                    <div class="checks">
+                        <label for="male">Karl</label>
+                            <input type="checkbox" name="sex" id="man" value="Karl" checked>
+                        <label for="female">Kona</label>
+                            <input type="checkbox" name="sex" id="woman" value="Kona" checked>
+                        <label for="other">Annað</label>
+                            <input type="checkbox" name="sex" id="other" value="Annað" checked>
+                    </div>
+                
             </div>
             <div id="socialposition">
+                <h4>Staða svaranda</h4>
+                <div class="checks">
                     <label for="elementary">Grunnskóla</label>
                         <input type="checkbox" name="socialposition" value="Grunnskóla" checked>
                     <label for="high">Menntaskóla</label>
@@ -32,32 +39,36 @@
                         <input type="checkbox" name="socialposition" value="Vinnumarkaði" checked>
                     <label for="other">Annað</label>
                         <input type="checkbox" name="socialposition" value="Annað" checked>
+                </div>
             </div>
             <div id="location">
-                <label for="capital">Höfuðborgarsvæðið</label>
-                <img src="img/landið/hofudborgarsvaedid.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Höfuðborgarsvæðið" checked>
-                <label for="west">Vesturland</label>
-                <img src="img/landið/vesturland.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Vesturland" checked>
-                <label for="westFjords">Vestfirðir</label>
-                <img src="img/landið/vestfirdir.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Vestfirðir" checked>
-                <label for="northWest">Norð-vesturland</label>
-                <img src="img/landið/nordvesturland.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Norð-vesturland" checked>
-                <label for="north">Norðurland</label>
-                <img src="img/landið/nordurland.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Norðurland" checked>
-                <label for="east">Austurland</label>
-                <img src="img/landið/austurland.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Austurland" checked>
-                <label for="south">Suðurland</label>
-                <img src="img/landið/sudurland.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Suðurland" checked>
-                <label for="southWest">Suðvesturland</label>
-                <img src="img/landið/island.png" class="locationImg" alt="">
-                    <input type="checkbox" name="location" value="Suðvesturland" checked>
+                <h4>Búseta svaranda</h4>
+                <div class="checks3">
+                    <label for="capital">Höfuðborgarsvæðið</label>
+                    <img src="img/landið/hofudborgarsvaedid.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Höfuðborgarsvæðið" checked>
+                    <label for="west">Vesturland</label>
+                    <img src="img/landið/vesturland.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Vesturland" checked>
+                    <label for="westFjords">Vestfirðir</label>
+                    <img src="img/landið/vestfirdir.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Vestfirðir" checked>
+                    <label for="northWest">Norð-vesturland</label>
+                    <img src="img/landið/nordvesturland.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Norð-vesturland" checked>
+                    <label for="north">Norðurland</label>
+                    <img src="img/landið/nordurland.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Norðurland" checked>
+                    <label for="east">Austurland</label>
+                    <img src="img/landið/austurland.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Austurland" checked>
+                    <label for="south">Suðurland</label>
+                    <img src="img/landið/sudurland.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Suðurland" checked>
+                    <label for="southWest">Suðvesturland</label>
+                    <img src="img/landið/sudvesturland.png" class="locationImg" alt="">
+                        <input type="checkbox" name="location" value="Suðvesturland" checked>
+                </div>
             </div>
             <button type="submit" id="submitSurveyButton">Búa til könnun</button>
         </form>
@@ -71,13 +82,14 @@
 
         addQuestion.onclick = function() {
             questionNumber++
+            var bothDiv = document.createElement('div')
             var div = document.createElement('div')
-            div.class = "question"
+            bothDiv.class = "question"
 
             var question = document.createElement('input')
             question.type = "text"
             question.name = `questions[${questionNumber}][question]`
-            question.placeholder = `Spurning ${questionNumber}`
+            question.placeholder = `Spurning`
             question.class = "questionInput"
 
             var optionsButton = document.createElement('button')
@@ -149,13 +161,27 @@
                 div.appendChild(onlyNumbersAnswer)
             }
 
+            var deleteQuestion = document.createElement('button')
+            deleteQuestion.type = 'button'
+            deleteQuestion.innerHTML = "Eyða spurningu"
 
+
+            var deleteDiv = document.createElement('div')
             
 
+            deleteQuestion.onclick = function(){
+                bothDiv.remove()
+                questionNumber -= 1
+            }
+
+            
             div.appendChild(question)
             div.appendChild(optionsButton)
             div.appendChild(userInputButton)
-            questions.appendChild(div)
+            deleteDiv.appendChild(deleteQuestion)
+            bothDiv.appendChild(div)
+            bothDiv.appendChild(deleteDiv)
+            questions.appendChild(bothDiv)
 
 
         }

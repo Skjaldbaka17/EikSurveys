@@ -1,10 +1,10 @@
 <%- include('header') -%>
 
-<h1>Hello World!</h1>
-    <div>
-        <form action="/createSurvey" method="post">
-            <input type="text" name="password">
-            <button type="submit">Login</button>
+    <div id="login">
+        <h3>Skráðu þig inn!</h3>
+        <form id="loginForm" action="/createSurvey" method="post">
+            <input type="text" name="password" placeholder="Leyniorð">
+            <button type="submit">Innskrá</button>
         </form>
     </div>
 

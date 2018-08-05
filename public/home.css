@@ -1,0 +1,24 @@
+#loginForm{
+    display: flex;
+    flex-direction: column;
+}
+
+#loginForm > button{
+    margin: 0 25% 0 25%;
+}
+
+#login{
+    padding: 0 20% 0 20%;
+    margin: 5% 0 0 0;
+}
+
+#login > h3{
+    text-align: center;
+}
+
+#login input{
+    height: 25px;
+    font-size: 20px;
+    margin: 0 0 25px 0;
+    text-align: center;
+}

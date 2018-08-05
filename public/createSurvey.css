@@ -1,13 +1,79 @@
 #surveyForm {
     display: flex;
     flex-direction: column; 
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
 }
 
 #surveyForm > input{
-    margin-top: 50px;
+    height: 25px;
+    font-size: 20px;
+    margin: 50px 20% 0 20%;
 }
 
-.locationImg {
+#surveyForm > div{
+    margin: 50px 20% 0 20%;
+}
+
+
+#questionsDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#questionsDiv > button{
+    max-width: 50%;
+    width: 200px;
     height: 30px;
-    width: 35px;
+}
+
+#questions{
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.question{
+    background: blue;
+    width: 1000px;
+}
+
+.checks{
+    display: grid;
+    grid-template-columns: 10fr 1fr;
+    grid-gap: 5px;
+    width: 30%;
+}
+
+.checks3{
+    display: grid;
+    grid-template-columns: 5fr 3fr 1fr;
+    grid-gap: 5px;
+    width: 40%;
+}
+
+.checks3 > label{
+    margin: 10px 0 0 0;
+}
+
+.checks3 > input{
+    margin: 10px 0 0 0;
+}
+
+#submitSurveyButton{
+    margin: 50px 0 50px 40%;
+    max-width: 25%;
+    width: 200px;
+    height: 30px;
+}
+
+
+.locationImg {
+    height: 40px;
+    width: 52px;
 }
