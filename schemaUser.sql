@@ -11,7 +11,7 @@ CREATE TABLE eikusers(
     sex varchar(255) NOT NULL DEFAULT '',
     socialposition varchar(255) NOT NULL DEFAULT '',
     address varchar(255) NOT NULL DEFAULT '',
-    location varchar(255)[] DEFAULT '{}',
+    location varchar(255) DEFAULT '',
     surveystaken integer[] NOT NULL DEFAULT '{}',
     loggedin INTEGER NOT NULL DEFAULT 0,
     firstSurveyTaken Boolean not null default false,

@@ -50,7 +50,7 @@ async function createAnswersTable(questions, name){
 
             console.log("Query For answersTable: ", query)
         for(var i = 0; i < questions.length; i++){
-            query += ( await onlyLetters(questions[i].question)) + " varchar(255)[]"
+            query += ( await onlyLetters(questions[i].question)) + " varchar(255)" + (questions[i].multipleAnswers ? "[]":"")
             if(i < questions.length - 1){
                 query += ","
             } else {query += " )"}

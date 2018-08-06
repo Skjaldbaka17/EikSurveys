@@ -2,7 +2,7 @@ CREATE TABLE eiksurveys(
     surveyid serial PRIMARY key,
     firstsurvey boolean not null default false,
     name varchar(255) not null,
-    price Integer not null default 0,
+    prize Integer not null default 0,
     about text not null default '',
     numberofquestions integer not null default 0,
     questions jsonb not null,
