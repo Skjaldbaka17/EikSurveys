@@ -325,7 +325,9 @@ async function saveAnswers(answers, survey, userID){
     var values = [survey.surveyid, userID]
     var value = "$1, $2,"
     for(var i = 0; i < answers.length; i++){
-        values.push(answers[i].answer)
+        if(answers[i].multipleAnswers){
+            values.push(answers[i].answers)
+        } else { values.push(answers[i].answer)}
         query += await onlyLetters(answers[i].question)
         value += `$${i+3}`
         if(i < answers.length-1){
