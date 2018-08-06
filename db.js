@@ -143,8 +143,8 @@ async function feed(userID, surveyID, testID){
     if(!userInfo){
         message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
     } else if(!userInfo.firstsurveytaken) {
-        message.feed = surveyID != -1 ? await getFirstSurvey():[]
-        message.success = message.feed && message.feed.length > 0 ? true:false
+        message.feed = surveyID == -1 ? await getFirstSurvey():[]
+        message.success = message.feed && (surveyID == -1 && message.feed.length > 0) ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo, surveyID)
         if(message.feed.length > 0){
@@ -170,8 +170,9 @@ async function getTestsFeed(userInfo, testID){
 
 async function getFirstSurvey(){
     var client = new Client({connectionString})
-    var query = `select * from ${surveysDB} where firstsurvey = true;`
+    var query = `select * from ${surveysDB} where firstsurvey = true`
     var feed = []
+    console.log("FirstSurveyQuery:", query)
     try{
         await client.connect()
         const result = await client.query(query)
