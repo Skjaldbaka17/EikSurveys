@@ -50,8 +50,10 @@ async function createIT(req, res){
         for(var i = 0; i < theQuestions.length; i++){
             theQuestions[i].multipleAnswers = theQuestions[i].multipleAnswers ? false:true
             theQuestions[i].onlyNumbers = theQuestions[i].onlyNumbers ? true:false
-            if(!theQuestions[i].options) {theQuestions[i].multipleAnswers = false}
-            theQuestions[i].options = Array.isArray(theQuestions[i].options) ? theQuestions[i].options:[theQuestions[i].options]
+            if(!theQuestions[i].options) {
+                theQuestions[i].multipleAnswers = false}
+                else {
+            theQuestions[i].options = Array.isArray(theQuestions[i].options) ? theQuestions[i].options:[theQuestions[i].options]}
         }
         console.log("HERE2")
         const data = {
