@@ -74,7 +74,7 @@ async function createIT(req, res){
         const message = await database.createSurvey(data)
         await makeOperationDetails(message.success, message.error, message.message)
     }
-    if(operationDetails.success){res.send("Könnun hefur verið bætt í gagnasafnið!")}
+    if(operationDetails.success){res.render('surveyCreated')}
     else {res.redirect('back')}
 }
 
@@ -98,4 +98,5 @@ router.use(catchErrors(cleanUp))
 router.get('/eik', catchErrors(home))
 router.post('/createSurvey', catchErrors(createSurvey))
 router.post('/createIT', catchErrors(createIT))
+router.get('/surveyCreated', function(req, res){res.render('surveyCreated')})
 module.exports = router
