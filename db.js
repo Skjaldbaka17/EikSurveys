@@ -170,7 +170,7 @@ async function getTestsFeed(userInfo, testID){
 
 async function getFirstSurvey(){
     var client = new Client({connectionString})
-    var query = `select * from ${surveysDB} where firstsurvey = true and ;`
+    var query = `select * from ${surveysDB} where firstsurvey = true;`
     var feed = []
     try{
         await client.connect()
