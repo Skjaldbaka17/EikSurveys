@@ -84,7 +84,8 @@
             questionNumber++
             var bothDiv = document.createElement('div')
             var div = document.createElement('div')
-            bothDiv.class = "question"
+            bothDiv.classList += "question"
+            div.classList += "leftQuestion"
 
             var question = document.createElement('input')
             question.type = "text"
@@ -102,6 +103,9 @@
             userInputButton.class = "optionsButton"
             userInputButton.innerHTML = "Skriflegt inlegg"
             const q = questionNumber
+
+            var optionsDiv = document.createElement('div')
+            optionsDiv.classList += "optionsDiv"
             optionsButton.onclick = function () {
                 optionsButton.hidden = true
                 userInputButton.hidden = true
@@ -119,7 +123,7 @@
                         option.placeholder = `Valmöguleiki ${options}`
                         option.class = "option"
 
-                        div.appendChild(option)
+                        optionsDiv.appendChild(option)
                     }
                 var onlyOneAnswer = document.createElement('input')
                 onlyOneAnswer.type = "checkbox"
@@ -131,9 +135,13 @@
                 radioLabel.innerHTML = "Aðeins eitt svar"
                 radioLabel.class = "radioLabel"
 
-                div.appendChild(radioLabel)
-                div.appendChild(onlyOneAnswer)
+                var aDiv = document.createElement('div')
+
+                aDiv.appendChild(radioLabel)
+                aDiv.appendChild(onlyOneAnswer)
+                div.appendChild(aDiv)
                 div.appendChild(addOption)
+                div.appendChild(optionsDiv)
                 
             }
 
@@ -156,9 +164,20 @@
                 onlyNumbersAnswer.checked = false
                 onlyNumbersAnswer.value = true
 
-                div.appendChild(input)
-                div.appendChild(radioLabel)
-                div.appendChild(onlyNumbersAnswer)
+                var optionsDiv = document.createElement('div')
+                optionsDiv.classList += "optionsDiv"
+                
+                optionsDiv.appendChild(input)
+
+                var radioDiv = document.createElement('div')
+                radioDiv.appendChild(radioLabel)
+                radioDiv.appendChild(onlyNumbersAnswer)
+
+                var fillerDiv = document.createElement('div')
+
+                div.appendChild(radioDiv)
+                div.appendChild(fillerDiv)
+                div.appendChild(optionsDiv)
             }
 
             var deleteQuestion = document.createElement('button')
