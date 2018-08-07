@@ -5,7 +5,7 @@ CREATE TABLE eikusers(
     email varchar(255) NOT NULL DEFAULT '',
     password VARCHAR(255) NOT NULL DEFAULT '', 
     invitationkey varchar(255) NOT NULL DEFAULT '',
-    phone INTEGER NOT NULL DEFAULT -1,
+    phone Varchar(255) NOT NULL DEFAULT '',
     phoneid VARCHAR(255) NOT NULL DEFAULT '',
     name VARCHAR(255) NOT NULL DEFAULT '',
     sex varchar(255) NOT NULL DEFAULT '',
