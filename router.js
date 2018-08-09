@@ -4,6 +4,7 @@ const router = express.Router()
 const db = require('./db')
 
 var operationDetails = {}
+const maxWithdrawal = 5000
 
 async function login(req, res){
     const {
@@ -114,6 +115,7 @@ async function feed(req, res){
         operationDetails.endOfTestsFeed = message.endOfTestsFeed
         operationDetails.endOfSurveyfeed = message.endOfSurveyfeed
         operationDetails.user = message.userInfo
+        operationDetails.maxWithdrawal = maxWithdrawal
     }
     res.send(operationDetails)
 }
