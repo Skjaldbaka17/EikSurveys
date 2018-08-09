@@ -355,11 +355,16 @@ async function updateSurvey(userID, surveyID){
 }
 
 async function saveAnswers(answers, survey, userID){
+    var message = {}
     console.log("HERE10")
     if(survey.firstsurvey){
-        return await saveFirstSurvey(answers, survey, userID)
+        message = await saveFirstSurvey(answers, survey, userID)
+        if (message.success && message.invitationkey){
+            await rewardFriend(message.invitationkey, userID)
+        }
+        return message
     }
-    var message = {}
+    
     var client = new Client({connectionString})
     var query = `Insert into ${survey.answerstable} (surveyid, userid, `
     var values = [survey.surveyid, userID]
@@ -399,6 +404,21 @@ async function saveAnswers(answers, survey, userID){
     }
 }
 
+async function rewardFriend(invitationKey, userID){
+    var client = new Client({connectionString})
+    var query = `update ${userDBName} set myfriends = array_append(myfriends, ${userID}), 
+    prizemoneyearned = prizemoneyearned+500 where myinvitationkey = ${invitationKey} returning *`
+    console.log("RewardFriendFunctionQuery:", query)
+    await client.connect()
+    try{
+        await client.query(query)
+    }catch(error){
+        console.log(error)
+    }finally{
+        await client.end()
+    }
+}
+
 async function saveFirstSurvey(answers, survey, userID){
     var message = {}
     var myInvitationKey = await generateUniqueInvitationKey()
@@ -430,6 +450,7 @@ console.log(query)
         + " uppfærslu af appinu og prófaðu aftur.")
         } else {
             message = await makeMessage(true, "", "")
+            message.invitationKey = rows[0].invitationkey
         }
     }catch(error){
         console.log(error)
