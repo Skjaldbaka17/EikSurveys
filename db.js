@@ -149,10 +149,6 @@ async function isInvitationKeyEligible(invitationKey){
         await client.end()
         return message
     }
-
-    message.success = true
-    message.error =""
-    return message
 }
 
 async function isEmailTaken(email){
@@ -408,6 +404,13 @@ async function saveFirstSurvey(answers, survey, userID){
     var myInvitationKey = await generateUniqueInvitationKey()
     if(!myInvitationKey){
         message = await makeMessage(false, "Could not make unique invitation key :/", "Gat ekki vistað svörin þín. Vinsamlegast reyndu aftur síðar.")
+        return message
+    }
+    var ssnTaken = await checkIfSSNExists(answers[1].answer)
+    if(ssnTaken){
+        message = await makeMessage(false, "SSN already exists in our database!", "Það er núþegar til notandi skráður á þessa kennitölu." +
+    " Ef þú kannast ekki við það að eiga þann aðgang hafðu samband við okkur og við skoðum málið.")
+        return message
     }
     var client = new Client({connectionString})
     var query = `Update ${userDBName} set name = '${answers[0].answer}',
@@ -434,6 +437,28 @@ console.log(query)
     }finally{
         await client.end()
         return message
+    }
+}
+
+async function checkIfSSNExists(ssn){
+    var exists = true
+    var client = new Client({connectionString})
+    var query = `select * from ${userDBName} where ssn = '${ssn}'`
+    await client.connect()
+    try{
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            exists = false
+        } else {
+            exists = true
+        }
+    }catch(error){
+        console.log(error)
+        exists = true
+    }finally{
+        await client.end()
+        return exists
     }
 }
 
