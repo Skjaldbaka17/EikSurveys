@@ -109,7 +109,7 @@ async function isEligibleForSignUp(data){
 async function isInvitationKeyEligible(invitationKey){
     var message = {}
     var client = new Client({connectionString})
-    var query = `select * from ${userDBName} where myinvitationkey = ${invitationKey}`
+    var query = `select * from ${userDBName} where myinvitationkey = '${invitationKey}'`
     await client.connect()
     try{
         const result = await client.query(query)
