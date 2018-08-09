@@ -58,7 +58,7 @@ async function signUp(req, res){
             }
             const message = await db.signUp(data)
             console.log("TheMessage:", message)
-            operationDetails.message = message.error
+            operationDetails.message = message.message
             operationDetails.success = message.success
             operationDetails.user = {
                 userID : message.userID

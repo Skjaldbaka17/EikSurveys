@@ -36,33 +36,60 @@ async function login(data){
 async function signUp(data){
     var message = await isEligibleForSignUp(data)
     if(message.success){
+        var myInvitationKey = await generateUniqueInvitationKey()
+        if (myInvitationKey){
+            var client = new Client({connectionString})
+            await client.connect()
 
-        var client = new Client({connectionString})
-        await client.connect()
-
-        try{
-            var query = `Insert into ${userDBName}(email, password, invitationkey) values($1, $2, $3) returning userid`
-            var values = [data.email, data.password, data.invitationKey]
-            const result = await client.query(query, values)
-            const { rows } = result
-            if(!rows[0]){
+            try{
+                var query = `Insert into ${userDBName}(email, password, invitationkey) values($1, $2, $3) returning userid`
+                var values = [data.email, data.password, data.invitationKey]
+                const result = await client.query(query, values)
+                const { rows } = result
+                if(!rows[0]){
+                    message.success = false
+                    message.error = "Villa! Tókst ekki að vista user í DB"
+                } else {
+                    message.success = true
+                    message.error = ""
+                    message.userID = rows[0].userid
+                }
+            }catch(error){
+                console.log(error)
                 message.success = false
-                message.error = "Villa! Tókst ekki að vista user í DB"
-            } else {
-                message.success = true
-                message.error = ""
-                message.userID = rows[0].userid
+                message.error = "Villa! Kerfisvilla!"
+            }finally{
+                await client.end()
+                return message
             }
-        }catch(error){
-            console.log(error)
-            message.success = false
-            message.error = "Villa! Kerfisvilla!"
-        }finally{
-            await client.end()
+        } else {
+            message = await makeMessage(false, "Error with invitation key", "Villa við að búa til einstakan boðslykil fyrir þig. Reyndu aftur síðar.")
             return message
         }
     } else {
         return message
+    }
+}
+
+async function generateUniqueInvitationKey(){
+    var key = (Math.random()*0xFFFFFF<<0).toString(16).toUpperCase()
+    var client = new Client({connectionString})
+    var query = `select * from ${userDBName} where myinvitationkey = '${key}'`
+    await client.connect()
+    try{
+        var result = await client.query(query)
+        var { rows } = result
+        while(rows[0]){
+            key = (Math.random()*0xFFFFFF<<0).toString(16).toUpperCase()
+            query = `select * from ${userDBName} where myinvitationkey = '${key}'`
+            result = await client.query(query)
+            rows = result.rows
+        }
+    }catch(error){
+        key = undefined
+    } finally{
+        await client.end()
+        return key
     }
 }
 
