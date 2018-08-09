@@ -36,8 +36,6 @@ async function login(data){
 async function signUp(data){
     var message = await isEligibleForSignUp(data)
     if(message.success){
-        var myInvitationKey = await generateUniqueInvitationKey()
-        if (myInvitationKey){
             var client = new Client({connectionString})
             await client.connect()
 
@@ -61,11 +59,7 @@ async function signUp(data){
             }finally{
                 await client.end()
                 return message
-            }
-        } else {
-            message = await makeMessage(false, "Error with invitation key", "Villa við að búa til einstakan boðslykil fyrir þig. Reyndu aftur síðar.")
-            return message
-        }
+            } 
     } else {
         return message
     }
@@ -411,12 +405,17 @@ async function saveAnswers(answers, survey, userID){
 
 async function saveFirstSurvey(answers, survey, userID){
     var message = {}
+    var myInvitationKey = await generateUniqueInvitationKey()
+    if(!myInvitationKey){
+        message = await makeMessage(false, "Could not make unique invitation key :/", "Gat ekki vistað svörin þín. Vinsamlegast reyndu aftur síðar.")
+    }
     var client = new Client({connectionString})
     var query = `Update ${userDBName} set name = '${answers[0].answer}',
     ssn = '${answers[1].answer}', age = ${await getAgeFromSSN(answers[1].answer)}, 
     location = '${await getLocationFrom(answers[4].answer)}', sex = '${answers[2].answer}', 
     socialposition = '${answers[3].answer}', address = '${answers[4].answer}', 
-    phone = '${answers[5].answer}', phoneid = '${answers[6].answer}'
+    phone = '${answers[5].answer}', phoneid = '${answers[6].answer}, 
+    myinvitationkey = '${myInvitationKey}'
     where userid = ${userID} returning *`
 console.log(query)
     try{

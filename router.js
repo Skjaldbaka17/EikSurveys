@@ -46,7 +46,7 @@ async function signUp(req, res){
         }
     } = req.body
 
-    if(!(email&&password&&invitationKey)){
+    if(!(email&&password&&invitationKey) && !(myInvitationKey == "")){
         operationDetails.success = false
         operationDetails.message = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
     }else{
