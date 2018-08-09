@@ -359,7 +359,7 @@ async function saveAnswers(answers, survey, userID){
     console.log("HERE10")
     if(survey.firstsurvey){
         message = await saveFirstSurvey(answers, survey, userID)
-        if (message.success && message.invitationkey){
+        if (message.success && message.invitationKey){
             await rewardFriend(message.invitationKey, userID)
         }
         return message
