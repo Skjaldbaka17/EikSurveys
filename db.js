@@ -5,6 +5,7 @@ const { onlyLetters } = require('./regex')
 const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
 const surveysDB = "eiksurveys"
+const maxFriends = 1
 
 async function login(data){
     var message = {}
@@ -107,6 +108,27 @@ async function isEligibleForSignUp(data){
 
 async function isInvitationKeyEligible(invitationKey){
     var message = {}
+    var client = new Client({connectionString})
+    var query = `select * from ${userDBName} where myinvitationkey = ${invitationKey}`
+    await client.connect()
+    try{
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0] || rows.length > 1){
+            message = await makeMessage(false,"No invitation key", "Þessi boðslykill er ekki til")
+        } else if(rows[0].myfriends.length >= maxFriends){
+            message = await makeMessage(false, "This invitation key is used up", "Ekki er hægt að nota þennan boðslykil lengur. Of margir vinir.")
+        } else {
+            message = await makeMessage(true, "" ,"")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "Kerfisvilla! Vinsamlegast reyndu aftur síðar.")
+    }finally{
+        await client.end()
+        return message
+    }
+
     message.success = true
     message.error =""
     return message
@@ -122,7 +144,7 @@ async function isEmailTaken(email){
         const{ rows } = result
         if(rows[0]){
             message.success = false
-            message.error = "Netfang tekið"
+            message.error = "Netfang er núþegar í notkun."
         } else {
             message.success = true
             message.error = ""

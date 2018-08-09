@@ -4,6 +4,8 @@ CREATE TABLE eikusers(
     age Integer not null default -1,
     email varchar(255) NOT NULL DEFAULT '',
     password VARCHAR(255) NOT NULL DEFAULT '', 
+    myinvitationkey varchar(255) NOT NULL DEFAULT '',
+    myfriends integer[] not null default '{}',
     invitationkey varchar(255) NOT NULL DEFAULT '',
     phone Varchar(255) NOT NULL DEFAULT '',
     phoneid VARCHAR(255) NOT NULL DEFAULT '',
