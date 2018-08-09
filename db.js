@@ -407,7 +407,7 @@ async function saveAnswers(answers, survey, userID){
 async function rewardFriend(invitationKey, userID){
     var client = new Client({connectionString})
     var query = `update ${userDBName} set myfriends = array_append(myfriends, ${userID}), 
-    prizemoneyearned = prizemoneyearned+500 where myinvitationkey = ${invitationKey} returning *`
+    prizemoneyearned = prizemoneyearned+500 where myinvitationkey = '${invitationKey}' returning *`
     console.log("RewardFriendFunctionQuery:", query)
     await client.connect()
     try{
