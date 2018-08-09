@@ -4,7 +4,7 @@ const router = express.Router()
 const db = require('./db')
 
 var operationDetails = {}
-const maxWithdrawal = 5000
+const minimumFirstAmount = 5000
 
 async function login(req, res){
     const {
@@ -115,7 +115,7 @@ async function feed(req, res){
         operationDetails.endOfTestsFeed = message.endOfTestsFeed
         operationDetails.endOfSurveyfeed = message.endOfSurveyfeed
         operationDetails.user = message.userInfo
-        operationDetails.maxWithdrawal = maxWithdrawal
+        operationDetails.minimumFirstAmount = message.userInfo.prizeMoneyCashed > 0 ? 0:minimumFirstAmount
     }
     res.send(operationDetails)
 }
