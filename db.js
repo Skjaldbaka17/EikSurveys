@@ -360,7 +360,7 @@ async function saveAnswers(answers, survey, userID){
     if(survey.firstsurvey){
         message = await saveFirstSurvey(answers, survey, userID)
         if (message.success && message.invitationkey){
-            await rewardFriend(message.invitationkey, userID)
+            await rewardFriend(message.invitationKey, userID)
         }
         return message
     }
