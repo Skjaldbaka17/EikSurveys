@@ -426,7 +426,7 @@ async function saveFirstSurvey(answers, survey, userID){
         message = await makeMessage(false, "Could not make unique invitation key :/", "Gat ekki vistað svörin þín. Vinsamlegast reyndu aftur síðar.")
         return message
     }
-    var ssnTaken = await checkIfSSNExists(answers[1].answer)
+    var ssnTaken = await checkIfSSNExists(answers[1].answer, userID)
     if(ssnTaken){
         message = await makeMessage(false, "SSN already exists in our database!", "Það er núþegar til notandi skráður á þessa kennitölu." +
     " Ef þú kannast ekki við það að eiga þann aðgang hafðu samband við okkur og við skoðum málið.")
@@ -461,10 +461,10 @@ console.log(query)
     }
 }
 
-async function checkIfSSNExists(ssn){
+async function checkIfSSNExists(ssn, userID){
     var exists = true
     var client = new Client({connectionString})
-    var query = `select * from ${userDBName} where ssn = '${ssn}'`
+    var query = `select * from ${userDBName} where ssn = '${ssn}' and not userid = '${userID}'`
     await client.connect()
     try{
         const result = await client.query(query)
