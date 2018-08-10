@@ -182,6 +182,7 @@ async function getPaid(req, res){
         }
         var message = await db.getPaid(data)
         operationDetails.success = message.success
+        operationDetails.title = message.success ? "Úttekt móttekin!":"Úttekt EKKI móttekin!"
         operationDetails.message = message.message
         operationDetails.error = message.error
     } else {
