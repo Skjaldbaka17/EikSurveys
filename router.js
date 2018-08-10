@@ -161,6 +161,35 @@ async function submitAnswers(req, res){
     res.send(operationDetails)
 }
 
+async function getPaid(req, res){
+    const {
+        payment:{
+            amount = false,
+            userID = false,
+            ssn = '',
+            bankAccount = '',
+            aurPhone = ''
+        }
+    } = req.body
+
+    if((userID&&amount)&&(ssn&&bankAccount || aurPhone)){
+        const data = {
+            amount: amount,
+            userID: userID,
+            ssn: ssn,
+            bankAccount: bankAccount,
+            aurPhone: aurPhone
+        }
+        var message = await db.getPaid(data)
+        operationDetails.success = message.success
+        operationDetails.message = message.message
+        operationDetails.error = message.error
+    } else {
+        await makeOperationDetails(false, "Required Fields empty", "Villa á okkar enda. Vinsamlegast reyndu aftur síðar.")
+    }
+    res.send(operationDetails)
+}
+
 async function makeOperationDetails(success, error, message){
     operationDetails.success = success
     operationDetails.error = error
@@ -184,5 +213,6 @@ router.post('/logout', catchErrors(logout))
 router.post('/feed', catchErrors(feed))
 router.post('/takeSurvey', catchErrors(takeSurvey))
 router.post('/submitAnswers', catchErrors(submitAnswers))
+router.post('/getPaid', catchErrors(getPaid))
 
 module.exports = router

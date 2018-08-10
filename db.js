@@ -5,6 +5,7 @@ const { onlyLetters } = require('./regex')
 const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
 const surveysDB = "eiksurveys"
+const paymentDB = "payments"
 const maxFriends = 1
 
 async function login(data){
@@ -462,6 +463,32 @@ console.log(query)
     }
 }
 
+async function getPaid(data){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `insert into ${paymentDB}(money, aurnumber, bankaccount, ssn, userid) values($1, $2, $3, $4, $5) returning *`
+    var values = [data.amount, data.aurPhone, data.bankAccount, data.ssn, data.userID]
+    await client.connect()
+
+    try{
+        const result = await client.query(query, values)
+        const { rows } = result
+
+        if(!rows[0]){
+            message = await makeMessage(false, "Could not insert data into Payments!", "Mistök við að vista borgunarupplýsingar. Vinsamlegast"+
+        " reyndu aftur síðar")
+        } else {
+            message = await makeMessage(true, "", "Úttekt getur tekið 1-2 virka daga að koma sér til skila.")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "Kerfisvilla! Vinsamlegast reyndu aftur síðar.")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
 async function checkIfSSNExists(ssn, userID){
     var exists = true
     var client = new Client({connectionString})
@@ -545,6 +572,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey, submitAnswers}
+var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid}
 
 module.exports = database
