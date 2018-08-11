@@ -231,7 +231,8 @@ async function getFirstSurvey(){
 
 async function getSurveyFeed(userInfo, surveyID){
     var client = new Client({connectionString})
-    var query = `select * from ${surveysDB} where surveyid > ${surveyID} and 
+    var query = `select * from ${surveysDB} where surveyid > ${surveyID} and
+    needinvitation = false and
     currentamount < maxamount and firstsurvey = false and 
     not (${userInfo.userid} = any (takenby)) and
     minage <= ${userInfo.age} and maxage >= ${userInfo.age} and 
@@ -465,6 +466,10 @@ console.log(query)
 
 async function getPaid(data){
     var message = {}
+    // message = await hasWithdrawalInLine(data)
+    // if(!message.success){
+    //     return message
+    // }
     var client = new Client({connectionString})
     var query = `insert into ${paymentDB}(money, aurnumber, bankaccount, ssn, userid) values($1, $2, $3, $4, $5) returning *`
     var values = [data.amount, data.aurPhone, data.bankAccount, data.ssn, data.userID]
@@ -483,6 +488,30 @@ async function getPaid(data){
     }catch(error){
         console.log(error)
         message = await makeMessage(false, error, "Kerfisvilla! Vinsamlegast reyndu aftur síðar.")
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
+async function hasWithdrawalInLine(data){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `select * from ${paymentDB} where userid = ${data.userID} and paid = false`
+    console.log(query)
+    await client.connect()
+    try{
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message.success = true
+        } else {
+            message = await makeMessage(false, "Error", "Við erum núþegar með úttekt eftir þig í biðröð. Þegar hún hefur verið afgreidd getur þú"+
+        " gert aðra úttekt.")
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, "Error", "Villa")
     }finally{
         await client.end()
         return message

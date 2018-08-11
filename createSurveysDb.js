@@ -4,6 +4,7 @@ const { onlyLetters } = require('./regex')
 
 const connectionString = process.env.DATABASE_URL;
 const surveysDB = "eiksurveys"
+const surveysInvitationKeysDB = "surveyinvitationkeys"
 
 async function createSurvey(data){
     var message = {}
@@ -11,10 +12,14 @@ async function createSurvey(data){
     var answersTableName = await onlyLetters(data.name + "_" + data.prize + "_" + randomInt)
     var client = new Client({connectionString})
     var query = `insert into ${surveysDB} (name, prize, about, questions, maxamount, minamount, maxage, 
-    minage, sex, socialposition, answerstable, location, numberofquestions) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *`
+    minage, sex, socialposition, answerstable, location, numberofquestions, needinvitation) values($1, $2, $3, $4, $5, $6, $7, $8, 
+        $9, $10, $11, $12, $13, $14) returning *`
     var values = [data.name , data.prize, data.about, JSON.stringify(data.questions), data.maxamount, data.minamount, data.maxage, data.minage,
-    data.sex, data.socialposition, answersTableName, data.location, data.numberOfQuestions]
+    data.sex, data.socialposition, answersTableName, data.location, data.numberOfQuestions, data.needInvitation]
     console.log(query)
+
+    var shouldCreateInvitationKeys = false
+    var surveyID = false
     try{
         await client.connect()
         const result = await client.query(query, values)
@@ -23,14 +28,52 @@ async function createSurvey(data){
             message = await makeMessage(false, "Villa!" , "Engu skilað í að inserta þessa könnun inn")
         } else {
             message = await createAnswersTable(data.questions, answersTableName)
+            if(data.needInvitation){
+                shouldCreateInvitationKeys = true
+                surveyID = rows[0].surveyid
+            }
         }
     }catch(error){
         console.log(error)
         message = await makeMessage(false, error, "Villa í að búa til könnun. Kerfisvilla!")
     }finally{
         await client.end()
+        console.log("ShouldCreate!", shouldCreateInvitationKeys, data.needInvitation)
+        if(shouldCreateInvitationKeys){
+        await createInvitationKeys(data, surveyID)
+    }
         return message
     }
+}
+
+async function createInvitationKeys(data, surveyID){
+    var client = new Client({connectionString})
+    console.log("Create MAN!")
+    var query = `insert into ${surveysInvitationKeysDB}(surveyid, invitationkey)
+        select ${surveyID} id, x from unnest(Array[${await generateUniqueInvitationKeys(data.amountOfInvitationKeys)}]) x`
+        console.log(query)
+    await client.connect()
+    try{
+        await client.query(query)
+        console.log("Worked!")
+    }catch(error){
+        console.log("ERRRORR:::", error)
+    }finally{
+        await client.end()
+        return
+    }
+}
+
+async function generateUniqueInvitationKeys(amount){
+    var keys = ""
+    for(var i = 0; i < amount; i++){
+        var key = (Math.random()*0xFFFFFF<<0).toString(16).toUpperCase()
+        keys += `'${key}'`
+        if(i < amount-1){
+            keys += ","
+        }
+    }
+    return keys
 }
 
 function getRandomInt(min, max) {
@@ -48,14 +91,13 @@ async function createAnswersTable(questions, name){
             surveyid integer not null,
             userid integer not null,`
 
-            console.log("Query For answersTable: ", query)
         for(var i = 0; i < questions.length; i++){
             query += ( await onlyLetters(questions[i].question)) + " varchar(255)" + (questions[i].multipleAnswers ? "[]":"")
             if(i < questions.length - 1){
                 query += ","
             } else {query += " )"}
         }
-        console.log(query)
+        console.log("Query For answersTable: ", query)
 
         await client.connect()
         const result = await client.query(query)

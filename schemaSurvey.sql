@@ -1,5 +1,6 @@
 CREATE TABLE eiksurveys(
     surveyid serial PRIMARY key,
+    needinvitation BOOLEAN DEFAULT false,
     firstsurvey boolean not null default false,
     name varchar(255) not null,
     prize Integer not null default 0,

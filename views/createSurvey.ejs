@@ -4,6 +4,11 @@
     <div id="surveyDiv">
         <form action="/createIT" method="post" id="surveyForm">
             <input type="text" name="name" placeholder="Nafn könnunar">
+            <div id="needsInvitationDiv">
+                <h4>Þarf boðslykil í þessa könnun?</h1>
+                <input type="checkbox" value="needsInvite" name="needInvitation" id="invitation">
+                <label for="invitation">Já</label>
+            </div>
             <div id="questionsDiv">
                 <button type="button" id="addQuestion">Bæta við spurningu</button>
                 <div id="questions"></div>
@@ -80,6 +85,23 @@
         var addQuestion = document.getElementById('addQuestion')
         var questions = document.getElementById('questions')
         var questionNumber = 0
+        var invitation = document.getElementById('invitation')
+        var invitationDiv = document.getElementById('needsInvitationDiv')
+
+        invitation.onclick = function(){
+            if(invitation.checked){
+                var amountOfKeys = document.createElement('input')
+                amountOfKeys.type = "number"
+                amountOfKeys.name = "amountOfInvitationKeys"
+                amountOfKeys.placeholder = "Fjöldi boðslykla"
+                amountOfKeys.id = "amountOfKeys"
+                
+                invitationDiv.appendChild(amountOfKeys)
+            } else {
+                var input = document.getElementById('amountOfKeys')
+                input.remove()
+            }
+        }
 
         addQuestion.onclick = function() {
             questionNumber++

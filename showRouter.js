@@ -37,10 +37,12 @@ async function createIT(req, res){
             sex = false,
             socialposition = false,
             questions = false,
-            location = false
+            location = false,
+            needInvitation = false,
+            amountOfInvitationKeys = false
         }
     } = req
-    if(!(name&&about&&sex&&socialposition&&location&&questions&&(questions.length > 0))){
+    if(!(name&&about&&sex&&socialposition&&location&&questions&&(questions.length > 0)) || (needInvitation&&!amountOfInvitationKeys)){
         console.log("Ekki nægar upplýsingar")
         await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
     } else {
@@ -68,7 +70,9 @@ async function createIT(req, res){
             sex: Array.isArray(sex) ? sex: [sex],
             socialposition: Array.isArray(socialposition) ? socialposition:[socialposition],
             location: Array.isArray(location) ? location:[location],
-            numberOfQuestions: questions.length
+            numberOfQuestions: questions.length,
+            needInvitation: needInvitation ? true:false,
+            amountOfInvitationKeys: amountOfInvitationKeys < 1000 ? amountOfInvitationKeys:1000
         }
         console.log("HERE3")
         const message = await database.createSurvey(data)
