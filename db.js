@@ -638,7 +638,7 @@ async function getUserInfo(userID){
 
 async function changeDeviceToken(userID, token){
     var client = new Client({connectionString})
-    var query = `update ${userDBName} set devicetoken = ${token} where userid = ${userID}`
+    var query = `update ${userDBName} set devicetoken = '${token}' where userid = ${userID}`
 
     try{
         await client.connect()
