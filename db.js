@@ -276,10 +276,17 @@ async function isSurveyInvitationKeyEligible(invitationKey, userID){
     await client.connect()
 
     try{
-        const result = await client.query(query)
-        const { rows } = result
+        var result = await client.query(query)
+        var { rows } = result
         if(!rows[0]){
-            message = await makeMessage(false, "No such invitationkey. for survey.", "Engin könnun í boði fyrir þennan boðslykil.")
+            query = `select * from ${invitationKeysDB} where invitationkey = '${invitationKey}'`
+            result = await client.query(query)
+            rows = result.rows
+            if(!rows[0]){
+                message = await makeMessage(false, "No such invitationkey. for survey.", "Engin könnun í boði fyrir þennan boðslykil.")
+            } else {
+                message = await makeMessage(false, "No such invitationkey. for survey.", "Þessi boðslykill hefur þegar verið notaður.")
+            }
         } else {
             message.success = true
             message.surveyID = rows[0].surveyid
