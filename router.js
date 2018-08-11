@@ -210,6 +210,18 @@ async function getPaid(req, res){
     res.send(operationDetails)
 }
 
+async function changeDeviceToken(req, res){
+    const {
+        body:{
+            userID = false,
+            deviceToken = false
+        }
+    } = req 
+    if(userID&&deviceToken){
+        db.changeDeviceToken(userID, deviceToken)
+    }
+}
+
 async function makeOperationDetails(success, error, message){
     operationDetails.success = success
     operationDetails.error = error
@@ -235,5 +247,6 @@ router.post('/takeSurvey', catchErrors(takeSurvey))
 router.post('/takeSurveyWithInvitationKey', catchErrors(takeSurveyWithInvitationKey))
 router.post('/submitAnswers', catchErrors(submitAnswers))
 router.post('/getPaid', catchErrors(getPaid))
+router.post('/changeDeviceToken', catchErrors(changeDeviceToken))
 
 module.exports = router

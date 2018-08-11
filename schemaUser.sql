@@ -20,5 +20,6 @@ CREATE TABLE eikusers(
     prizemoneyearned Integer not null default 0,
     prizemoneycashed integer not null default 0,
     DATECreated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    lastActivityDate TIMESTAMP NOT NULL DEFAULT now()
+    lastActivityDate TIMESTAMP NOT NULL DEFAULT now(),
+    devicetoken text DEFAULT null
 );

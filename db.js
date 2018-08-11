@@ -636,6 +636,20 @@ async function getUserInfo(userID){
     }
 }
 
+async function changeDeviceToken(userID, token){
+    var client = new Client({connectionString})
+    var query = `update ${userDBName} set devicetoken = ${token} where userid = ${userID}`
+
+    try{
+        await client.connect()
+        await client.query(query)
+    }catch(error){
+        console.log(error, query)
+    }finally{
+        await client.end()
+    }
+}
+
 async function makeMessage(success, error, message){
     var message = {
         success: success,
@@ -645,6 +659,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith}
+var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken}
 
 module.exports = database
