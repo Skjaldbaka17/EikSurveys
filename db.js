@@ -6,6 +6,7 @@ const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
 const surveysDB = "eiksurveys"
 const paymentDB = "payments"
+const invitationKeysDB = "surveyinvitationkeys"
 const maxFriends = 1
 
 async function login(data){
@@ -253,6 +254,42 @@ async function getSurveyFeed(userInfo, surveyID){
     }finally{
         await client.end()
         return await feed
+    }
+}
+
+async function takeSurveyWith(invitationKey, userID){
+    var message = await isSurveyInvitationKeyEligible(invitationKey, userID)
+    if(message.success && message.surveyID){
+        var message = await takeSurvey(userID, message.surveyID)
+        return message
+    } else {
+        return message
+    }
+}
+
+async function isSurveyInvitationKeyEligible(invitationKey, userID){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `update ${invitationKeysDB} set usedby = array_append(usedby, ${userID}), used = true 
+    where invitationkey = '${invitationKey}' and used = false returning *`
+    console.log("SurveyKeyEligibleQuery?", query)
+    await client.connect()
+
+    try{
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            message = await makeMessage(false, "No such invitationkey. for survey.", "Engin könnun í boði fyrir þennan boðslykil.")
+        } else {
+            message.success = true
+            message.surveyID = rows[0].surveyid
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, "Error searching for inv.Key. Surveys.", "Kerfisvilla!. Vinsamlegast reyndu aftur síðar.")
+    }finally{
+        await client.end()
+        return message
     }
 }
 
@@ -601,6 +638,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid}
+var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith}
 
 module.exports = database

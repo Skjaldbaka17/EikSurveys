@@ -140,6 +140,24 @@ async function takeSurvey(req, res){
     res.send(operationDetails)
 }
 
+async function takeSurveyWithInvitationKey(req, res){
+    const {
+        body: {
+            userID = false,
+            invitationKey = false
+        }
+    } = req
+
+    if(!(userID&&invitationKey)){
+        await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
+    } else {
+        var message = await db.takeSurveyWith(invitationKey, userID)
+        await makeOperationDetails(message.success, message.error, message.message)
+        operationDetails.survey = message.survey
+    }
+    res.send(operationDetails)
+}
+
 async function submitAnswers(req, res){
     const {
         body: {
@@ -213,6 +231,7 @@ router.post('/login', catchErrors(login))
 router.post('/logout', catchErrors(logout))
 router.post('/feed', catchErrors(feed))
 router.post('/takeSurvey', catchErrors(takeSurvey))
+router.post('/takeSurveyWithInvitationKey', catchErrors(takeSurveyWithInvitationKey))
 router.post('/submitAnswers', catchErrors(submitAnswers))
 router.post('/getPaid', catchErrors(getPaid))
 
