@@ -218,8 +218,13 @@ async function changeDeviceToken(req, res){
         }
     } = req 
     if(userID&&deviceToken){
-        db.changeDeviceToken(userID, deviceToken)
+        await db.changeDeviceToken(userID, deviceToken)
+        await makeOperationDetails(true, "" ,"")
+    } else {
+        await makeOperationDetails(false, "" ,"")
     }
+
+    res.send(operationDetails)
 }
 
 async function makeOperationDetails(success, error, message){
