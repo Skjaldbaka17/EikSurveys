@@ -12,6 +12,7 @@ let options = {
 };
 
 async function newSurveyAvailable(deviceTokens, nameOfSurvey, prizeForSurvey){
+  console.log("The Options:", options)
   let apnProvider = new apn.Provider(options);
   // Prepare the notifications
   let notification = new apn.Notification();
@@ -29,7 +30,7 @@ async function newSurveyAvailable(deviceTokens, nameOfSurvey, prizeForSurvey){
       // Replace deviceToken with your particular token:
       let deviceToken = deviceTokens[i];
       // Send the actual notification
-      await apnProvider.send(notification, deviceToken).then( result => {
+      apnProvider.send(notification, deviceToken).then( result => {
         // Show the result of the send operation:
         console.log(result);
       });
@@ -38,7 +39,7 @@ async function newSurveyAvailable(deviceTokens, nameOfSurvey, prizeForSurvey){
       // Replace deviceToken with your particular token:
       let deviceToken = deviceTokens;
       // Send the actual notification
-      await apnProvider.send(notification, deviceToken).then( result => {
+      apnProvider.send(notification, deviceToken).then( result => {
         // Show the result of the send operation:
         console.log(result);
       });

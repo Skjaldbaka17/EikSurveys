@@ -72,7 +72,11 @@ async function notifyUsersOfNewSurvey(survey){
     }finally{
         await client.end()
         if(deviceTokens.length > 0){
-            pushNotifications.newSurveyAvailable(deviceTokens)
+            try{
+                pushNotifications.newSurveyAvailable(deviceTokens)
+            } catch(error){
+                console.log("Villan:", error)
+            }
         }
     }
 }
