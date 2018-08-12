@@ -409,7 +409,7 @@ async function saveAnswers(answers, survey, userID){
     if(survey.firstsurvey){
         message = await saveFirstSurvey(answers, survey, userID)
         if (message.success && message.invitationKey){
-            await rewardFriend(message.invitationKey, userID, answers[0].answer)
+            await rewardFriend(message.invitationKey, userID, message.userInfo)
         }
         return message
     }
@@ -453,7 +453,7 @@ async function saveAnswers(answers, survey, userID){
     }
 }
 
-async function rewardFriend(invitationKey, userID, name){
+async function rewardFriend(invitationKey, userID, userInfo){
     var client = new Client({connectionString})
     var friend = false
     var query = `update ${userDBName} set myfriends = array_append(myfriends, ${userID}), 
@@ -469,7 +469,7 @@ async function rewardFriend(invitationKey, userID, name){
     }finally{
         await client.end()
         if(friend && friend.devicetoken){
-            pushNotifications.friendFinishedSurvey(friend.devicetoken, name)
+            pushNotifications.friendFinishedSurvey(friend.devicetoken, userInfo.name)
         }
     }
 }
@@ -506,6 +506,7 @@ console.log(query)
         } else {
             message = await makeMessage(true, "", "")
             message.invitationKey = rows[0].invitationkey
+            message.userInfo = rows[0]
         }
     }catch(error){
         console.log(error)
@@ -645,6 +646,9 @@ async function getUserInfo(userID){
 }
 
 async function changeDeviceToken(userID, token){
+    if(token){
+        await cleanUpToken(token)
+    }
     var client = new Client({connectionString})
     var query = `update ${userDBName} set devicetoken = '${token}' where userid = ${userID}`
 
@@ -653,6 +657,20 @@ async function changeDeviceToken(userID, token){
         await client.query(query)
     }catch(error){
         console.log(error, query)
+    }finally{
+        await client.end()
+    }
+}
+
+async function cleanUpToken(deviceToken){
+    var client = new Client({connectionString})
+    var query = `update ${userDBName} set devicetoken = Null where devicetoken = '${deviceToken}'`
+    await client.connect()
+
+    try{
+        await client.query(query)
+    }catch(error){
+        console.log(error)
     }finally{
         await client.end()
     }
