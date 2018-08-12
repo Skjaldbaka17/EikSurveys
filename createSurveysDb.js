@@ -1,9 +1,11 @@
 require('dotenv').config();
 const { Client } = require('pg');
 const { onlyLetters } = require('./regex')
+const pushNotifications = require('./pushNotifications')
 
 const connectionString = process.env.DATABASE_URL;
 const surveysDB = "eiksurveys"
+const usersDB = "eikusers"
 const surveysInvitationKeysDB = "surveyinvitationkeys"
 
 async function createSurvey(data){
@@ -28,6 +30,7 @@ async function createSurvey(data){
             message = await makeMessage(false, "Villa!" , "Engu skilað í að inserta þessa könnun inn")
         } else {
             message = await createAnswersTable(data.questions, answersTableName)
+            message.survey = rows[0]
             if(data.needInvitation){
                 shouldCreateInvitationKeys = true
                 surveyID = rows[0].surveyid
@@ -38,11 +41,39 @@ async function createSurvey(data){
         message = await makeMessage(false, error, "Villa í að búa til könnun. Kerfisvilla!")
     }finally{
         await client.end()
-        console.log("ShouldCreate!", shouldCreateInvitationKeys, data.needInvitation)
+        console.log("ShouldNotify:", message.success, message.survey)
         if(shouldCreateInvitationKeys){
-        await createInvitationKeys(data, surveyID)
-    }
+            await createInvitationKeys(data, surveyID)
+        } else if (message.success && message.survey) {
+                notifyUsersOfNewSurvey(message.survey)
+        }
         return message
+    }
+}
+
+async function notifyUsersOfNewSurvey(survey){
+    console.log("Notifying")
+    var deviceTokens = []
+    var client = new Client({connectionString})
+    var query = `select devicetoken from ${usersDB} where 
+    devicetoken is not null and age >= ${survey.minage} and age <= ${survey.maxage} and
+    sex = any (${survey.sex}) and socialposition = any (${survey.socialposition}) and
+    location = any (${survey.location})`
+    console.log("NotifyingQuery")
+    await client.connect()
+    try{
+        const result = await client.query(query)
+        const {rows} = result
+        for(var i = 0; i < rows.length; i++){
+            deviceTokens.push(rows[i].deviceToken)
+        }
+    }catch(error){
+        console.log(error)
+    }finally{
+        await client.end()
+        if(deviceTokens.length > 0){
+            pushNotifications.newSurveyAvailable(deviceTokens)
+        }
     }
 }
 
