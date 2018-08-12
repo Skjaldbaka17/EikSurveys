@@ -65,7 +65,7 @@ async function notifyUsersOfNewSurvey(survey){
         const result = await client.query(query)
         const {rows} = result
         for(var i = 0; i < rows.length; i++){
-            deviceTokens.push(rows[i].deviceToken)
+            deviceTokens.push(rows[i].devicetoken)
         }
     }catch(error){
         console.log(error)
