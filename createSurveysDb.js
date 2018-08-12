@@ -57,8 +57,8 @@ async function notifyUsersOfNewSurvey(survey){
     var client = new Client({connectionString})
     var query = `select devicetoken from ${usersDB} where 
     devicetoken is not null and age >= ${survey.minage} and age <= ${survey.maxage} and
-    sex = any (${survey.sex}) and socialposition = any (${survey.socialposition}) and
-    location = any (${survey.location})`
+    sex = any ('{${survey.sex}}') and socialposition = any ('{${survey.socialposition}}') and
+    location = any ('{${survey.location}}')`
     console.log("NotifyingQuery", query)
     await client.connect()
     try{
