@@ -187,7 +187,7 @@ async function feed(userID, surveyID, testID){
         message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
     } else if(!userInfo.firstsurveytaken) {
         message.feed = surveyID == -1 ? await getFirstSurvey():[]
-        message.success = message.feed && (surveyID == -1 && message.feed.length > 0) ? true:false
+        message.success = message.feed && (message.feed.length > 0) ? true:false
     } else {
         message.feed = await getSurveyFeed(userInfo, surveyID)
         if(message.feed.length > 0){
