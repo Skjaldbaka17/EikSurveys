@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const database = require('./createSurveysDb')
+const { getUserInfo } = require('./db')
+const {sendNotification} = require('./pushNotifications')
+
 
 var operationDetails = {}
 
@@ -15,12 +18,32 @@ async function createSurvey(req, res){
             password = false
         }
     } = req
-    res.render('createSurvey')
-    // if(!password || (password != "Skjaldbaka")){
-    //     res.redirect('/eik')
-    // } else{
-    //     res.render('createSurvey')
-    // }
+    // res.render('createSurvey')
+    if(!password){
+        res.redirect('/eik')
+    } else if (password == "CustomMessage"){
+        res.render('customMessage')
+    } else {
+        res.render('createSurvey')
+    }
+}
+
+async function customMessage(req, res){
+    const {
+        body: {
+            userID = false,
+            message = false
+        }
+    } = req
+    if(!(userID&&message)){
+        res.redirect('/eik')
+    } else {
+        var userInfo = await getUserInfo(userID)
+        if(userInfo && userInfo.devicetoken){
+            sendNotification(userInfo.devicetoken, message)
+        }
+        res.send("Completer!")
+    }
 }
 
 async function createIT(req, res){
@@ -103,4 +126,5 @@ router.get('/eik', catchErrors(home))
 router.post('/createSurvey', catchErrors(createSurvey))
 router.post('/createIT', catchErrors(createIT))
 router.get('/surveyCreated', function(req, res){res.render('surveyCreated')})
+router.post('/customMessage', catchErrors(customMessage))
 module.exports = router

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client } = require('pg');
 const { onlyLetters } = require('./regex')
+const pushNotifications = require('./pushNotifications')
 
 const connectionString = process.env.DATABASE_URL;
 const userDBName = "eikusers"
@@ -8,6 +9,7 @@ const surveysDB = "eiksurveys"
 const paymentDB = "payments"
 const invitationKeysDB = "surveyinvitationkeys"
 const maxFriends = 1
+const friendReward = 500
 
 async function login(data){
     var message = {}
@@ -407,7 +409,7 @@ async function saveAnswers(answers, survey, userID){
     if(survey.firstsurvey){
         message = await saveFirstSurvey(answers, survey, userID)
         if (message.success && message.invitationKey){
-            await rewardFriend(message.invitationKey, userID)
+            await rewardFriend(message.invitationKey, userID, answers[0].answer)
         }
         return message
     }
@@ -451,18 +453,24 @@ async function saveAnswers(answers, survey, userID){
     }
 }
 
-async function rewardFriend(invitationKey, userID){
+async function rewardFriend(invitationKey, userID, name){
     var client = new Client({connectionString})
+    var friend = false
     var query = `update ${userDBName} set myfriends = array_append(myfriends, ${userID}), 
-    prizemoneyearned = prizemoneyearned+500 where myinvitationkey = '${invitationKey}' returning *`
+    prizemoneyearned = prizemoneyearned+${friendReward} where myinvitationkey = '${invitationKey}' returning *`
     console.log("RewardFriendFunctionQuery:", query)
     await client.connect()
     try{
-        await client.query(query)
+        const result = await client.query(query)
+        const { rows } = result
+        friend = rows[0]
     }catch(error){
         console.log(error)
     }finally{
         await client.end()
+        if(friend && friend.devicetoken){
+            pushNotifications.friendFinishedSurvey(friend.devicetoken, name)
+        }
     }
 }
 
@@ -659,6 +667,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken}
+var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo}
 
 module.exports = database
