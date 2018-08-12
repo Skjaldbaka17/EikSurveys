@@ -3,8 +3,9 @@ const apn = require('apn');
  
 let options = {
   token: {
-    key: "AuthKey_DUWBVH8RU3.p8",
+    // key: "AuthKey_DUWBVH8RU3.p8",
     // Replace keyID and teamID with the values you've previously saved.
+    key: process.env.AUTHKEY_APN,
     keyId: process.env.KEY_ID,
    teamId: process.env.TEAM_ID
  },
