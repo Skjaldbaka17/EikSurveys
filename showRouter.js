@@ -39,7 +39,8 @@ async function customMessage(req, res){
         res.redirect('/eik')
     } else {
         var userInfo = await getUserInfo(userID)
-        if(userInfo && userInfo.devicetoken && userInfo.loggedin > 0){
+        console.log("IsItThere:",userInfo.devicetoken)
+        if(userInfo && userInfo.devicetoken){
             sendNotification(userInfo.devicetoken, message)
         }
         res.send("Completer!")

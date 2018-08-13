@@ -44,7 +44,7 @@ async function signUp(data){
             await client.connect()
 
             try{
-                var query = `Insert into ${userDBName}(email, password, invitationkey) values($1, $2, $3) returning userid`
+                var query = `Insert into ${userDBName}(email, password, invitationkey, loggedin) values($1, $2, $3, 1) returning userid`
                 var values = [data.email, data.password, data.invitationKey]
                 const result = await client.query(query, values)
                 const { rows } = result
@@ -94,7 +94,7 @@ async function generateUniqueInvitationKey(){
 async function logout(userID){
     var message = {}
     var client = new Client({connectionString})
-    var query = `update ${userDBName} set loggedin = loggedin-1, lastactivitydate = current_timestamp where userid = ${userID} returning *`
+    var query = `update ${userDBName} set loggedin = loggedin-1, lastactivitydate = current_timestamp, devicetoken = null where userid = ${userID} returning *`
     // var query =`update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
 
     console.log("Logout:", query)
