@@ -115,6 +115,7 @@ async function feed(req, res){
         operationDetails.endOfTestsFeed = message.endOfTestsFeed
         operationDetails.endOfSurveyfeed = message.endOfSurveyfeed
         operationDetails.user = message.userInfo
+        operationDetails.customAlert = message.customAlert
         operationDetails.minimumFirstAmount = message.userInfo.prizeMoneyCashed > 0 ? 0:minimumFirstAmount
     }
     res.send(operationDetails)

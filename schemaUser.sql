@@ -19,6 +19,7 @@ CREATE TABLE eikusers(
     firstSurveyTaken Boolean not null default false,
     prizemoneyearned Integer not null default 0,
     prizemoneycashed integer not null default 0,
+    customalert jsonb default null,
     DATECreated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     lastActivityDate TIMESTAMP NOT NULL DEFAULT now(),
     devicetoken text DEFAULT null

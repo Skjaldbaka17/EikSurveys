@@ -182,9 +182,15 @@ async function isEmailTaken(email){
 
 async function feed(userID, surveyID, testID){
     var message = {}
-    var userInfo = await getUserInfo(userID)
+    var userInfo = await getUserInfo(userID, true)
     if(!userInfo){
         message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
+    } else if(userInfo.customalert){
+        message.customAlert = userInfo.customalert
+        message.success = true
+        message.endOfSurveyfeed = false
+        message.endOfTestsFeed = false
+        await deleteCustomAlert(userID)
     } else if(!userInfo.firstsurveytaken) {
         message.feed = surveyID == -1 ? await getFirstSurvey():[]
         message.success = message.feed && (message.feed.length > 0) ? true:false
@@ -206,6 +212,20 @@ async function feed(userID, surveyID, testID){
     userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
     message.userInfo = userInfo
     return message
+}
+
+async function deleteCustomAlert(userID){
+    var client = new Client({connectionString})
+    var query = `Update ${userDBName} set customalert = null where userid = ${userID};`
+    try{
+        await client.connect()
+        await client.query(query)
+    }catch(error){
+        console.log(error)
+    }finally{
+        await client.end()
+        return
+    }
 }
 
 async function getTestsFeed(userInfo, testID){
