@@ -8,7 +8,7 @@ const userDBName = "eikusers"
 const surveysDB = "eiksurveys"
 const paymentDB = "payments"
 const invitationKeysDB = "surveyinvitationkeys"
-const maxFriends = 1
+const maxFriends = 15
 const friendReward = 500
 
 async function login(data){
