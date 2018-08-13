@@ -185,12 +185,6 @@ async function feed(userID, surveyID, testID){
     var userInfo = await getUserInfo(userID, true)
     if(!userInfo){
         message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
-    } else if(userInfo.customalert){
-        message.customAlert = userInfo.customalert
-        message.success = true
-        message.endOfSurveyfeed = false
-        message.endOfTestsFeed = false
-        await deleteCustomAlert(userID)
     } else if(!userInfo.firstsurveytaken) {
         message.feed = surveyID == -1 ? await getFirstSurvey():[]
         message.success = message.feed && (message.feed.length > 0) ? true:false
@@ -206,6 +200,11 @@ async function feed(userID, surveyID, testID){
             message.endOfTestsFeed = message.tests.count > 0 ? false:true
             message.success = true
         }
+    }
+
+    if(userInfo && userInfo.customalert){
+        message.customAlert = userInfo.customalert
+        await deleteCustomAlert(userID)
     }
     userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
     userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
