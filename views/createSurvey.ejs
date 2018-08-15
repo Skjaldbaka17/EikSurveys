@@ -3,7 +3,7 @@
 <h1>Búa til könnun</h1>
     <div id="surveyDiv">
         <form action="/createIT" method="post" id="surveyForm">
-            <input type="text" name="name" placeholder="Nafn könnunar">
+            <input type="text" name="name" placeholder="Nafn könnunar" required>
             <div id="needsInvitationDiv">
                 <h4>Þarf boðslykil í þessa könnun?</h1>
                 <input type="checkbox" value="needsInvite" name="needInvitation" id="invitation">
@@ -13,12 +13,12 @@
                 <button type="button" id="addQuestion">Bæta við spurningu</button>
                 <div id="questions"></div>
             </div>
-            <input type="number" name="prize" placeholder="Verðlaun">
-            <input type="text" name="about" placeholder="Stutt lýsing">
-            <input type="number" name="maxamount" placeholder="Hámarksfjöldi">
-            <input type="number" name="minamount" placeholder="Lágmarksfjöldi">
-            <input type="number" name="maxage" placeholder="Hæsti aldur">
-            <input type="number" name="minage" placeholder="Minnsti aldur (lágmarki 15)">
+            <input type="number" name="prize" placeholder="Verðlaun" required>
+            <input type="text" name="about" placeholder="Stutt lýsing" required>
+            <input type="number" name="maxamount" placeholder="Hámarksfjöldi" required>
+            <input type="number" name="minamount" placeholder="Lágmarksfjöldi" required>
+            <input type="number" name="maxage" placeholder="Hæsti aldur" required>
+            <input type="number" name="minage" placeholder="Minnsti aldur (lágmarki 15)" required>
             <div id="sex">
                 <h4>Kyn svaranda</h5>
                     <div class="checks">

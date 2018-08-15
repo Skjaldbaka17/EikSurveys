@@ -24,3 +24,9 @@ CREATE TABLE eikusers(
     lastActivityDate TIMESTAMP NOT NULL DEFAULT now(),
     devicetoken text DEFAULT null
 );
+
+-- customalert = '{"message":"Þú ert svalur", 
+-- "title": "Yó!", 
+-- "cancelButton": "Hætta", 
+-- "url": "https://itunes.apple.com/us/app/quotel-quotes-quotations/id1394606175?mt=8"}'
+-- "okeyButton": "Næs"

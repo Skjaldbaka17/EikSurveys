@@ -23,7 +23,7 @@ app.use('/', router);
 
 function accessAuthorized(req,res,next){
     const {key} = req.body
-    console.log(req.body)
+    console.log("Key???", req.body)
     if(key === accessKey) {
         next()
     } else{

@@ -3,6 +3,7 @@ const router = express.Router()
 const database = require('./createSurveysDb')
 const { getUserInfo } = require('./db')
 const {sendNotification} = require('./pushNotifications')
+const xss = require("xss");
 
 
 var operationDetails = {}
@@ -12,16 +13,16 @@ async function home(req, res){
 }
 
 async function createSurvey(req, res){
-    console.log(req.body)
+    console.log("What?", req.body)
     const {
         body:{
             password = false
         }
     } = req
-    // res.render('createSurvey')
-    if(!password){
+    const thePassword = xss(password)
+    if(!thePassword){
         res.redirect('/eik')
-    } else if (password == "CustomMessage"){
+    } else if (thePassword == "CustomMessage"){
         res.render('customMessage')
     } else {
         res.render('createSurvey')
@@ -35,13 +36,15 @@ async function customMessage(req, res){
             message = false
         }
     } = req
-    if(!(userID&&message)){
+    const theUserID = xss(userID)
+    const theMessage = xss(message)
+    if(!(theUserID&&theMessage)){
         res.redirect('/eik')
     } else {
-        var userInfo = await getUserInfo(userID)
+        var userInfo = await getUserInfo(theUserID)
         console.log("IsItThere:",userInfo.devicetoken)
         if(userInfo && userInfo.devicetoken){
-            sendNotification(userInfo.devicetoken, message)
+            sendNotification(userInfo.devicetoken, theMessage)
         }
         res.send("Completer!")
     }
