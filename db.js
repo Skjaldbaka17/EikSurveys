@@ -279,11 +279,20 @@ async function getSurveyFeed(userInfo, surveyID){
 }
 
 async function takeSurveyWith(invitationKey, userID){
-    var message = await isSurveyInvitationKeyEligible(invitationKey, userID)
+    var userInfo = await getUserInfo(userID)
+    var message = {}
+    if(!userInfo || !userInfo.firstsurveytaken){
+        message = await makeMessage(false, "", "Þú verður að klára fyrstu könnun fyrst.")
+        message.title = "Fyrsta könnun fyrst!"
+        return message
+    } else {
+        message = await isSurveyInvitationKeyEligible(invitationKey, userID)
+    }
     if(message.success && message.surveyID){
         var message = await takeSurvey(userID, message.surveyID)
         return message
     } else {
+        message.title = "Ekki til!"
         return message
     }
 }

@@ -155,7 +155,7 @@ async function takeSurveyWithInvitationKey(req, res){
         var message = await db.takeSurveyWith(invitationKey, userID)
         await makeOperationDetails(message.success, message.error, message.message)
         operationDetails.survey = message.survey
-        operationDetails.title = message.success ? "":"Ekki til!"
+        operationDetails.title = message.success ? "":message.title
     }
     res.send(operationDetails)
 }
