@@ -39,17 +39,23 @@ async function customPushNot(req, res){
             message = false
         }
     } = req
+    console.log("Here")
     const theUserID = xss(userID)
     const theMessage = xss(message)
     if(!(theUserID&&theMessage)){
         res.redirect('/eik')
     } else {
         var userInfo = await getUserInfo(theUserID)
-        console.log("IsItThere:",userInfo.devicetoken)
-        if(userInfo && userInfo.devicetoken){
-            sendNotification(userInfo.devicetoken, theMessage)
+        if(userInfo){
+            console.log("IsItThere:",userInfo.devicetoken)
+            if(userInfo && userInfo.devicetoken){
+                sendNotification(userInfo.devicetoken, theMessage)
+            }
+            var themessage = "Heppnaðist!"
+            res.render('surveyCreated', {themessage})
+        } else {
+            res.send("Could Not MakeIT")
         }
-        res.send("Completer!")
     }
 }
 
@@ -79,10 +85,11 @@ async function customMessage(req, res){
             okeyButton: xss(okeyButton),
             url: xss(url)
         }
-
-        var success = await sendCustomMessage(data)
-
-        res.render('surveyCreated', {message: "Þetta heppnaðist" + success ? "":" ekki"})
+        try{var success = await sendCustomMessage(data)
+            var themessage = "Þetta heppnaðist"
+            if(!success){themessage += " ekki"}
+            res.render('surveyCreated', {themessage})
+        }catch(error){console.log(error)}
     }
 }
 
@@ -141,7 +148,8 @@ async function createIT(req, res){
         const message = await database.createSurvey(data)
         await makeOperationDetails(message.success, message.error, message.message)
     }
-    if(operationDetails.success){res.render('surveyCreated',{message:"Könnun hefur verið bætt í gagnasafnið"})}
+    var themessage = "Könnun hefur verið bætt í gagnasafnið"
+    if(operationDetails.success){res.render('surveyCreated',{themessage})}
     else {res.redirect('back')}
 }
 
