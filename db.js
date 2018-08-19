@@ -4,10 +4,10 @@ const { onlyLetters } = require('./regex')
 const pushNotifications = require('./pushNotifications')
 
 const connectionString = process.env.DATABASE_URL;
-const userDBName = "eikusers"
-const surveysDB = "eiksurveys"
-const paymentDB = "payments"
-const invitationKeysDB = "surveyinvitationkeys"
+const userDBName = process.env.USERDBNAME
+const surveysDB = process.env.SURVEYSDB
+const paymentDB = process.env.PAYMENTDB
+const invitationKeysDB = process.env.INVITATIONKEYSDB
 const maxFriends = 15
 const friendReward = 500
 

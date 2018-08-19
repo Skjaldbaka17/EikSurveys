@@ -1,0 +1,13 @@
+<%- include('header') -%>
+<link rel="stylesheet" href="customPushNot.css">
+<h1>Custom Push Notification</h1>
+<form action="/customPushNot" method="POST">
+    <div id="inputs">
+        <label for="">UserID</label>
+        <input type="number" name="userID">
+        <label for="">Skilaboð</label>
+        <input type="text" name="message">
+    </div>
+    <button type="submit">Senda Notification</button>
+</form>
+<%- include('footer') -%>

@@ -1,7 +1,122 @@
 <%- include('header') -%>
+<link rel="stylesheet" href="customMessage.css">
+<h1>Custom Push Notification</h1>
 <form action="/customMessage" method="POST">
-    <input type="number" name="userID">
-    <input type="text" name="message">
-    <button type="submit">Senda Notification</button>
+    <div id="titleAndMessage">
+        <label for="">Titill</label>
+        <input type="text" name="title" required>
+        <label for="">Skilaboð</label>
+        <input type="text" name="message" required>
+    </div>
+        <div id="okeyDiv">
+            <button id ="okey">Bæta við allt í lagi takka</button>
+        </div>
+        <div id="cancelDiv">
+            <button id="cancel">Bæta við hætta við takka</button>
+        </div>
+        <div id="whoGetsIt">
+            <label for="">Allir</label>
+            <input type="checkbox" name="all" id="allCheck" checked>
+        </div>
+    
+
+    <button type="submit">Senda Custom Message</button>
 </form>
+
+<script>
+    var okeyButton = document.getElementById('okey')
+    var cancelButton = document.getElementById('cancel')
+    var okeyDiv = document.getElementById('okeyDiv')
+    var cancelDiv = document.getElementById('cancelDiv')
+    var whoGetsItDiv = document.getElementById('whoGetsIt')
+    var allCheck = document.getElementById('allCheck')
+
+    allCheck.onclick = function() {
+        if(allCheck.checked){
+            var usersDiv = document.getElementById('usersDiv')
+            usersDiv.remove()
+        } else {
+            var usersDiv = document.createElement('div')
+            usersDiv.id = "usersDiv"
+            
+            var label = document.createElement('label')
+            label.innerHTML = "Notendur"
+            usersDiv.appendChild(label)
+
+            var addUserButton = document.createElement('button')
+            addUserButton.type = "button"
+            addUserButton.innerHTML = "Bæta við notanda"
+            usersDiv.appendChild(addUserButton)
+
+            var usersDivDiv = document.createElement('div')
+            usersDivDiv.id = "usersDivDiv"
+
+            addUserButton.onclick = function(){
+                var userInput = document.createElement('input')
+                userInput.type = "number"
+                userInput.name = "users"
+                userInput.required = true
+
+                var deleteUser = document.createElement('button')
+                deleteUser.type = "button"
+                deleteUser.innerHTML = "Eyða notanda"
+
+                deleteUser.onclick = function(){
+                    userInput.remove()
+                    deleteUser.remove()
+                }
+
+                usersDivDiv.appendChild(userInput)
+                usersDivDiv.appendChild(deleteUser)
+            }
+
+            usersDiv.appendChild(usersDivDiv)
+
+            
+    whoGetsItDiv.appendChild(usersDiv)
+            
+        }
+    }
+
+    okeyButton.onclick = function(){
+        okeyButton.remove()
+        var okeyInput = document.createElement('input')
+        okeyInput.type = "text"
+        okeyInput.name = "okeyButton"
+
+        var deleteOkeyInput = document.createElement('button')
+        deleteOkeyInput.type = "button"
+        deleteOkeyInput.innerHTML = "Eyða Allt í lagi Takka"
+
+        deleteOkeyInput.onclick = function(){
+            okeyInput.remove()
+            deleteOkeyInput.remove()
+            okeyDiv.appendChild(okeyButton)
+        }
+        okeyDiv.appendChild(deleteOkeyInput)
+        okeyDiv.appendChild(okeyInput)
+        
+    }
+
+    cancelButton.onclick = function(){
+        cancelButton.remove()
+        var cancelInput = document.createElement('input')
+        cancelInput.type = "text"
+        cancelInput.name = "cancelButton"
+
+        var deleteCancelInput = document.createElement('button')
+        deleteCancelInput.type = "button"
+        deleteCancelInput.innerHTML = "Eyða Hætta við Takka"
+
+        deleteCancelInput.onclick = function(){
+            cancelInput.remove()
+            deleteCancelInput.remove()
+            cancelDiv.appendChild(cancelButton)
+        }
+        cancelDiv.appendChild(deleteCancelInput)
+        cancelDiv.appendChild(cancelInput)
+        
+    }
+
+</script>
 <%- include('footer') -%>

@@ -3,6 +3,7 @@ const router = express.Router()
 const database = require('./createSurveysDb')
 const { getUserInfo } = require('./db')
 const {sendNotification} = require('./pushNotifications')
+const sendCustomMessage = require('./customAlert')
 const xss = require("xss");
 
 
@@ -24,12 +25,14 @@ async function createSurvey(req, res){
         res.redirect('/eik')
     } else if (thePassword == "CustomMessage"){
         res.render('customMessage')
+    } else if (thePassword == "customPushNot"){
+        res.render('customPushNot')
     } else {
         res.render('createSurvey')
     }
 }
 
-async function customMessage(req, res){
+async function customPushNot(req, res){
     const {
         body: {
             userID = false,
@@ -47,6 +50,39 @@ async function customMessage(req, res){
             sendNotification(userInfo.devicetoken, theMessage)
         }
         res.send("Completer!")
+    }
+}
+
+async function customMessage(req, res){
+    const {
+        body:{
+            all = false,
+            users = false,
+            title = false,
+            message = false,
+            cancelButton = false,
+            okeyButton = false,
+            url = false
+        }
+    } = req
+    console.log(req.body)
+    if(!(all||users)||!(title&&message)){
+        res.send("Required fields empty!")
+    } else {
+        var theUsers = Array.isArray(users) ? users:[users]
+        const data = {
+            all: xss(all),
+            users: xss(theUsers),
+            title: xss(title),
+            message: xss(message),
+            cancelButton: xss(cancelButton),
+            okeyButton: xss(okeyButton),
+            url: xss(url)
+        }
+
+        var success = await sendCustomMessage(data)
+
+        res.render('surveyCreated', {message: "Þetta heppnaðist" + success ? "":" ekki"})
     }
 }
 
@@ -105,7 +141,7 @@ async function createIT(req, res){
         const message = await database.createSurvey(data)
         await makeOperationDetails(message.success, message.error, message.message)
     }
-    if(operationDetails.success){res.render('surveyCreated')}
+    if(operationDetails.success){res.render('surveyCreated',{message:"Könnun hefur verið bætt í gagnasafnið"})}
     else {res.redirect('back')}
 }
 
@@ -130,5 +166,6 @@ router.get('/eik', catchErrors(home))
 router.post('/createSurvey', catchErrors(createSurvey))
 router.post('/createIT', catchErrors(createIT))
 router.get('/surveyCreated', function(req, res){res.render('surveyCreated')})
+router.post('/customPushNot', catchErrors(customPushNot))
 router.post('/customMessage', catchErrors(customMessage))
 module.exports = router
