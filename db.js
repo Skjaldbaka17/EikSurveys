@@ -663,6 +663,7 @@ async function getUserInfo(userID){
             userInfo = null
         } else {
             userInfo = rows[0]
+            userInfo.surveysTaken = rows[0].surveystaken.length
         }
     }catch(error){
         console.log(error)
@@ -672,6 +673,7 @@ async function getUserInfo(userID){
         return userInfo
     }
 }
+
 
 async function changeDeviceToken(userID, token){
     if(token){
