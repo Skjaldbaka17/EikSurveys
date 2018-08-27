@@ -182,7 +182,7 @@ async function isEmailTaken(email){
 
 async function feed(userID, surveyID, testID){
     var message = {}
-    var userInfo = await getUserInfo(userID, true)
+    var userInfo = await getUserInfo(userID)
     if(!userInfo){
         message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
     } else if(!userInfo.firstsurveytaken) {
