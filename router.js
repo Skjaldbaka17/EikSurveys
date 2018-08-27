@@ -168,14 +168,8 @@ async function submitAnswers(req, res){
             answers = false
         }
     } = req
-    console.log("HERE2")
-    console.log(userID)
-    console.log(survey)
-    console.log(answers)
-    console.log("The Thing:", (!survey.answerstable), (!answers[0]), (!answers[0].question), (!answers[0].answer),  (!survey.surveyid))
     if(!(userID&&survey&&answers) || (!survey.answerstable) || (!answers[0]) || 
-    (!answers[0].question) || (!answers[0].answer) || (!survey.surveyid)){
-        
+    (!answers[0].question) || (!answers[0].answer&&!answers[0].answers) || (!survey.surveyid)){
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
         
