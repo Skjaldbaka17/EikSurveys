@@ -171,6 +171,7 @@ async function submitAnswers(req, res){
 
     if(!(userID&&survey&&answers) || (!survey.answerstable) || (!answers[0]) || 
     (!answers[0].question) || (!answers[0].answer) || (!survey.surveyid)){
+        console.log("The Thing:", (userID&&survey&&answers), (!survey.answerstable), (!answers[0]), (!answers[0].question), (!answers[0].answer),  (!survey.surveyid))
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
         console.log("HERE2")
