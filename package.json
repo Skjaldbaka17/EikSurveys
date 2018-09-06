@@ -11,6 +11,7 @@
     "express": "^4.16.3",
     "path": "^0.12.7",
     "pg": "^7.4.3",
+    "request": "^2.88.0",
     "xss": "^1.0.3"
   },
   "devDependencies": {},

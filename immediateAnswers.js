@@ -1,7 +1,7 @@
 require('dotenv').config()
 const axios = require('axios'); // promised based requests - like fetch()
 const { Client } = require('pg');
-const sms = require('sendSMS')
+const sms = require('./sendSMS')
 
 var phoneValidation = {}
 const connectionString = process.env.DATABASE_URL;
