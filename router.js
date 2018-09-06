@@ -237,9 +237,6 @@ async function validateSSN(req, res){
     if(!(userID&&singleAnswer)){
         await makeOperationDetails(false, "Required Fields empty", "Villa á okkar enda. Vinsamlegast reyndu aftur síðar.")
         operationDetails.title = "Villa!"
-    } else if (typeof singleAnswer != 'number'){
-        await makeOperationDetails(false, "SSN IS NOT A NUMBER!!", "Kennitalan sem þú skrifaðir inn er ekki tala. Vinsamlegast reyndu aftur.")
-        operationDetails.title = "Villa!"
     }else{
         var message = await immediateAnswers.validateSSN(userID, singleAnswer)
         await makeOperationDetails(message.success, message.error, message.message)
