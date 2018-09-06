@@ -48,7 +48,7 @@ async function validateSSN(userID, ssn){
       console.log(info)
       var success = false
       var client = new Client({connectionString})
-      var query = `insert into ${userDBName} set ssninfo = ${JSON.stringify(info)} where userid = ${userID} returning *`
+      var query = `insert into ${userDBName} set ssninfo = '${JSON.stringify(info)}' where userid = ${userID} returning *`
       console.log("SaveSSNINFO query: ", query)
       await client.connect()
       try{
