@@ -69,6 +69,7 @@ async function validateSSN(userID, ssn){
         var client = new Client({connectionString})
         var query = `select * from ${userDBName} where ssn = '${ssn}' and not userid = '${userID}'`
         await client.connect()
+        console.log("Check if ssn is takne:", query)
         try{
             const result = await client.query(query)
             const { rows } = result

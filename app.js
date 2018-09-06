@@ -37,7 +37,8 @@ function notFoundHandler(req, res, next) { // eslint-disable-line
     console.log("Not Found")
     res.status(404);
     const operationDetails = {
-        message : "Þessi slóð er ekki til",
+        message : "Villa við vinnslu á gögnum.",
+        title: "Villa!",
         success : false
     }
     res.send(operationDetails)
@@ -47,7 +48,8 @@ function notFoundHandler(req, res, next) { // eslint-disable-line
     gefa upp meiri upplýsingar með status-kóðanum (default hér 500)*/
   function errorHandler(err, req, res, next) { // eslint-disable-line
     const operationDetails = {
-        message : "Þessi slóð er ekki til",
+        message : "Villa við vinnslu á gögnum.",
+        title: "Villa!",
         success : false
     }
     res.status(500);

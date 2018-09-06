@@ -238,6 +238,7 @@ async function validateSSN(req, res){
         await makeOperationDetails(false, "Required Fields empty", "Villa á okkar enda. Vinsamlegast reyndu aftur síðar.")
         operationDetails.title = "Villa!"
     }else{
+        console.log("USERID OG SINGLEANSER:", userID, singleAnswer)
         var message = await immediateAnswers.validateSSN(userID, singleAnswer)
         await makeOperationDetails(message.success, message.error, message.message)
         operationDetails.title = message.title
