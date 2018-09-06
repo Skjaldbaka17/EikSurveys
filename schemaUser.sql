@@ -22,7 +22,8 @@ CREATE TABLE eikusers(
     customalert jsonb default null,
     DATECreated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     lastActivityDate TIMESTAMP NOT NULL DEFAULT now(),
-    devicetoken text DEFAULT null
+    devicetoken text DEFAULT null,
+    ssninfo jsonb default null
 );
 
 -- customalert = '{"message":"Þú ert svalur", 

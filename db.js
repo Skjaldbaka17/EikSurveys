@@ -357,8 +357,8 @@ async function takeSurvey(userID, surveyID){
     }
 }
 
-async function submitAnswers(userID, survey, answers){
-    var message = await saveAnswers(answers, survey, userID)
+async function submitAnswers(userID, survey, answers, timeStuff){
+    var message = await saveAnswers(answers, survey, userID, timeStuff)
     if(message.success){
         console.log("HERE6")
         updateSurveyAndUser(userID, survey)
@@ -431,7 +431,7 @@ async function updateSurvey(userID, surveyID){
     }
 }
 
-async function saveAnswers(answers, survey, userID){
+async function saveAnswers(answers, survey, userID, timeStuff){
     var message = {}
     console.log("HERE10")
     if(survey.firstsurvey){
@@ -443,15 +443,15 @@ async function saveAnswers(answers, survey, userID){
     }
     
     var client = new Client({connectionString})
-    var query = `Insert into ${survey.answerstable} (surveyid, userid, `
-    var values = [survey.surveyid, userID]
-    var value = "$1, $2,"
+    var query = `Insert into ${survey.answerstable} (surveyid, userid, timerequired, timespent, toofast, `
+    var values = [survey.surveyid, userID, timeStuff.timeRequired, timeStuff.timeSpent, timeStuff.tooFast]
+    var value = "$1, $2, $3, $4, $5, "
     for(var i = 0; i < answers.length; i++){
         if(answers[i].multipleAnswers){
             values.push(answers[i].answers)
         } else { values.push(answers[i].answer)}
         query += await onlyLetters(answers[i].question)
-        value += `$${i+3}`
+        value += `$${i+6}`
         if(i < answers.length-1){
             query += ","
             value += ","
@@ -509,12 +509,12 @@ async function saveFirstSurvey(answers, survey, userID){
         message = await makeMessage(false, "Could not make unique invitation key :/", "Gat ekki vistað svörin þín. Vinsamlegast reyndu aftur síðar.")
         return message
     }
-    var ssnTaken = await checkIfSSNExists(answers[1].answer, userID)
-    if(ssnTaken){
-        message = await makeMessage(false, "SSN already exists in our database!", "Það er núþegar til notandi skráður á þessa kennitölu." +
-    " Ef þú kannast ekki við það að eiga þann aðgang hafðu samband við okkur og við skoðum málið.")
-        return message
-    }
+    // var ssnTaken = await checkIfSSNExists(answers[1].answer, userID)
+    // if(ssnTaken){
+    //     message = await makeMessage(false, "SSN already exists in our database!", "Það er núþegar til notandi skráður á þessa kennitölu." +
+    // " Ef þú kannast ekki við það að eiga þann aðgang hafðu samband við okkur og við skoðum málið.")
+    //     return message
+    // }
     var client = new Client({connectionString})
     var query = `Update ${userDBName} set name = '${answers[0].answer}',
     ssn = '${answers[1].answer}', age = ${await getAgeFromSSN(answers[1].answer)}, 

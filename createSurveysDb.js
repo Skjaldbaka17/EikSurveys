@@ -125,7 +125,10 @@ async function createAnswersTable(questions, name){
     try{
         var query = `Create table ${name}(
             surveyid integer not null,
-            userid integer not null,`
+            userid integer not null,
+            timerequired double precision[],
+            timespent double precision[], 
+            toofast boolean[], `
 
         for(var i = 0; i < questions.length; i++){
             query += ( await onlyLetters(questions[i].question)) + " varchar(255)" + (questions[i].multipleAnswers ? "[]":"")

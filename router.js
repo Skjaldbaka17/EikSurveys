@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express')
 const router = express.Router()
 const db = require('./db')
+const immediateAnswers = require('./immediateAnswers')
 
 var operationDetails = {}
 const minimumFirstAmount = 5000
@@ -172,12 +173,28 @@ async function submitAnswers(req, res){
     (!answers[0].question) || (!answers[0].answer&&!answers[0].answers) || (!survey.surveyid)){
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
-        
-        var message = await db.submitAnswers(userID, survey, answers)
+        var timeStuff = await getTimeStuff(answers)
+        var message = await db.submitAnswers(userID, survey, answers, timeStuff)
         await makeOperationDetails(message.success, message.error, message.message)
         console.log("HERE3")
     }
     res.send(operationDetails)
+}
+
+async function getTimeStuff(answers){
+    var timeSpent = []
+    var timeRequired = []
+    var tooFast = []
+    for(var i = 0; i < answers.length; i++){
+        timeSpent.push(answers.timeSpent)
+        timeRequired.push(answers.timeRequired)
+        tooFast.push(answers.tooFast)
+    }
+    return {
+        timeSpent: timeSpent,
+        timeRequired: timeRequired,
+        tooFast: tooFast
+    }
 }
 
 async function getPaid(req, res){
@@ -210,13 +227,35 @@ async function getPaid(req, res){
     res.send(operationDetails)
 }
 
+async function validateSSN(req, res){
+    const {
+        body:{
+            singleAnswer = false,
+            userID = false
+        }
+    } = req
+    if(!(userID&&singleAnswer)){
+        await makeOperationDetails(false, "Required Fields empty", "Villa á okkar enda. Vinsamlegast reyndu aftur síðar.")
+        operationDetails.title = "Villa!"
+    } else if (typeof singleAnswer != 'number'){
+        await makeOperationDetails(false, "SSN IS NOT A NUMBER!!", "Kennitalan sem þú skrifaðir inn er ekki tala. Vinsamlegast reyndu aftur.")
+        operationDetails.title = "Villa!"
+    }else{
+        var message = await immediateAnswers.validateSSN(userID, singleAnswer)
+        await makeOperationDetails(message.success, message.error, message.message)
+        operationDetails.title = message.title
+    }
+    res.send(operationDetails)
+}
+
 async function changeDeviceToken(req, res){
     const {
         body:{
             userID = false,
             deviceToken = false
         }
-    } = req 
+    } = req
+
     if(userID&&deviceToken){
         await db.changeDeviceToken(userID, deviceToken)
         await makeOperationDetails(true, "" ,"")
@@ -253,5 +292,6 @@ router.post('/takeSurveyWithInvitationKey', catchErrors(takeSurveyWithInvitation
 router.post('/submitAnswers', catchErrors(submitAnswers))
 router.post('/getPaid', catchErrors(getPaid))
 router.post('/changeDeviceToken', catchErrors(changeDeviceToken))
+router.post('/validateSSN', catchErrors(validateSSN))
 
 module.exports = router

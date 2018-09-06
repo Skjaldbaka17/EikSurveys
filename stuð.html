@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Snake</title>
+    
+</head>
+<body>
+    <div id="titill"></div>
+
+        <script>
+            var snake = []
+            var origin = document.createElement('div')
+            var blue = 0x00ff00
+            var red = 0xff0000
+            var titill = document.getElementById('titill')
+            titill.style.fontSize = '100px'
+            titill.style.margin = '250px 500px 0px 500px'
+            var i = 0
+            var left = 0
+            var speedX = 0
+            var speedY = 0
+            document.body.style.backgroundColor = 'pink'
+            titill.style.backgroundColor = 'black'
+            titill.style.height = "100px"
+            titill.style.width = "100px"
+document.body.onkeydown = function(e){
+    if(e.keyCode == 37){
+        speedX = -1
+        speedY = 0
+    } else if (e.keyCode == 38){
+        speedX = 0
+        speedY = 1
+    } else if (e.keyCode == 39){
+        speedX = 1
+        speedY = 0
+    } else {
+        speedX = 0
+        speedY = -1
+    }
+}
+
+            setInterval(function(){
+                i++
+                titill.style.paddingLeft = `${speedX*10}px`
+                titill.style.paddingBottom = `${speedY*10}px`
+                if(i%2 == 0){
+                    titill.style.color = 'blue'
+                    left += 10
+                    console.log()
+                } else {
+                    titill.style.color = 'red'
+                }
+            }, 100)
+        </script>
+    
+</body>
+</html>
