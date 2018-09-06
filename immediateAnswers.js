@@ -30,7 +30,7 @@ async function validateSSN(userID, ssn){
           message.title = "Villa!"
       }
     }catch(error){
-    //   console.log(error)
+        console.log(error)
       message = await makeMessage(false, "error", "")
       if(error.status = 404){
           message.title = "Kennitala ekki til"
