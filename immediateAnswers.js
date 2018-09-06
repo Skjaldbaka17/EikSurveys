@@ -22,9 +22,8 @@ async function validateSSN(userID, ssn){
         return message
     }
 
-    instance.defaults.baseURL += `/${ssn}`
     try{
-      var response = await instance.get()
+      var response = await instance.get(`/${ssn}`)
       if(response.status == 200){
           message = await makeMessage(true, "", "")
           saveSSNInfo(response.data, userID)
