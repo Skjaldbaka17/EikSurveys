@@ -1,12 +1,15 @@
+require('dotenv').config()
 const axios = require('axios'); // promised based requests - like fetch()
 const { Client } = require('pg');
+const sms = require('sendSMS')
 
+var phoneValidation = {}
 const connectionString = process.env.DATABASE_URL;
 const userDBName = process.env.USERDBNAME
 var instance = axios.create({
   baseURL: 'https://api.ja.is/skra/v1/people',
   headers: {"Authorization": process.env.AUTH_SSN_KEY},
-  timeout: 3000
+  timeout: 3000,
 });
 
 async function validateSSN(userID, ssn){
@@ -60,6 +63,7 @@ async function validateSSN(userID, ssn){
       }catch(error){
           console.log(error)
       }finally{
+          await client.end()
           return success
       }
   }
@@ -97,5 +101,83 @@ async function validateSSN(userID, ssn){
         return message
     }
 
+    async function validatePhone(userID, phone){
+        var message = {}
+        var verifNumber = await getRandomInt(1000000)
 
-module.exports = {validateSSN}
+        phoneValidation[`${userID}`] = verifNumber
+        var success = await saveVerificationNumber(userID, verifNumber)
+
+        if(success){
+            sms.sendSMS(phone,verifNumber,"Eik")
+            message = await makeMessage(true, "", "")
+        } else {
+            delete phoneValidation[`${userID}`]
+            message = await makeMessage(false, "Error", "Gat ekki sent þér skilaboð. Vinsamlegast reyndu aftur síðar.")
+            message.title = villa
+        }
+        return message
+    }
+
+    async function saveVerificationNumber(userID, verificationNumber){
+        var client = new Client({connectionString})
+        var query = `update ${userDBName} set phoneid = '${verificationNumber}' where userid = ${userID} returning *`
+        await client.connect()
+        var success = false
+
+        try{
+            var result = await client.query(query)
+            var { rows } = result
+            if(rows[0]){
+                success = true
+            }
+        }catch(error){
+            console.log(error)
+        }finally{
+            await client.end()
+            return success
+        }
+    }
+
+    async function getRandomInt(max) {
+        var num = `${Math.floor(Math.random() * Math.floor(max))}`;
+        var mis = 6 - num.length
+        for(var i = 0; i < mis;i++){
+            num = `0${num}`
+        }
+        return num
+      }
+
+      async function verifyPhone(userID, verifPhone){
+          var message = {}
+          if(phoneValidation[`${userID}`] == verifPhone){
+              message = await makeMessage(true, "", "")
+              delete phoneValidation[`${userID}`]
+              console.log("Variable On Server!!!")
+              return message
+          }
+          var client = new Client({connectionString})
+          var query = `select * from ${userDBName} where userid = ${userID} and phoneid = '${verifPhone}'`
+          await client.connect()
+          try{
+              var result = await client.query(query)
+              var { rows } = result
+              if(!rows[0]){
+                  message = await makeMessage(false, "Error", "Rangur lykill. Lyklar eru bara nothæfir í skamma stund. Athugaðu hvort"+
+                " þú gafst upp rétt símanúmer og reyndu aftur.")
+                message.title = "Lykill passar ekki"
+              } else {
+                  message = await makeMessage(true, "", "")
+              }
+          }catch(error){
+              console.log(error)
+              message = await makeMessage(false, "Error", "Villa við að finna lykill. Vinsamlegast reyndu aftur síðar.")
+              message.title = "Villa!"
+          }finally{
+              await client.end()
+              return message
+          }
+      }
+
+
+module.exports = {validateSSN, validatePhone, verifyPhone}

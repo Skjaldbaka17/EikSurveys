@@ -173,10 +173,18 @@ async function submitAnswers(req, res){
     (!answers[0].question) || (!answers[0].answer&&!answers[0].answers) || (!survey.surveyid)){
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
-        var timeStuff = await getTimeStuff(answers)
-        var message = await db.submitAnswers(userID, survey, answers, timeStuff)
-        await makeOperationDetails(message.success, message.error, message.message)
-        console.log("HERE3")
+        var success = true
+        if(survey.firstsurvey){
+            var msg = await immediateAnswers.verifyPhone(userID, answers[answers.length-1].answer)
+            success = msg.success
+            await makeOperationDetails(false, msg.error, msg.message)
+            operationDetails.title = msg.title
+        }
+        if(success){
+            var timeStuff = await getTimeStuff(answers)
+            var message = await db.submitAnswers(userID, survey, answers, timeStuff)
+            await makeOperationDetails(message.success, message.error, message.message)
+        }
     }
     res.send(operationDetails)
 }
@@ -246,6 +254,25 @@ async function validateSSN(req, res){
     res.send(operationDetails)
 }
 
+async function validatePhone(req, res){
+    const {
+        body:{
+            singleAnswer = false,
+            userID = false
+        }
+    } = req
+    if(!(userID&&singleAnswer)){
+        await makeOperationDetails(false, "Required Fields empty", "Villa á okkar enda. Vinsamlegast reyndu aftur síðar.")
+        operationDetails.title = "Villa!"
+    }else{
+        console.log("USERID OG SINGLEANSER:", userID, singleAnswer)
+        var message = await immediateAnswers.validatePhone(userID, singleAnswer)
+        await makeOperationDetails(message.success, message.error, message.message)
+        operationDetails.title = message.title
+    }
+    res.send(operationDetails)
+}
+
 async function changeDeviceToken(req, res){
     const {
         body:{
@@ -291,5 +318,6 @@ router.post('/submitAnswers', catchErrors(submitAnswers))
 router.post('/getPaid', catchErrors(getPaid))
 router.post('/changeDeviceToken', catchErrors(changeDeviceToken))
 router.post('/validateSSN', catchErrors(validateSSN))
+router.post('/validatePhone', catchErrors(validatePhone))
 
 module.exports = router
