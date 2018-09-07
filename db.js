@@ -672,7 +672,7 @@ async function getUserInfo(userID){
             userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
             userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
             // userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
-            userInfo.prizeMoneyLeft = 500000
+            userInfo.prizeMoneyLeft = 50000000
             userInfo.myInformation = [
                 {
                     text: "Kannanir teknar: ",
