@@ -675,7 +675,7 @@ async function getUserInfo(userID){
             userInfo.myInformation = [
                 {
                     text: "Kannanir teknar: ",
-                    data: userInfo.surveysTaken
+                    data: `${userInfo.surveysTaken}`
                 },
                 {
                     text: "Heildarupphæð safnað: ",
