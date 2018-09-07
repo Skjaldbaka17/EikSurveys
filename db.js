@@ -679,7 +679,8 @@ async function getUserInfo(userID){
                 },
                 {
                     text: "Heildarupphæð safnað: ",
-                    data: `${userInfo.prizeMoneyEarned} kr.`
+                    // data: `${userInfo.prizeMoneyEarned} kr.`
+                    data: "50000 kr."
                 },
                 {
                     text: "Vinum boðið: ",
