@@ -110,6 +110,7 @@ async function feed(req, res){
         var message = await db.feed(userID, surveyID, testID)
         operationDetails.success = message.success
         operationDetails.error = message.error
+        operationDetails.title = message.title
         operationDetails.message = message.message
         operationDetails.surveys = message.feed
         operationDetails.tests = message.tests

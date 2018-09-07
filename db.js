@@ -185,7 +185,12 @@ async function feed(userID, surveyID, testID){
     var userInfo = await getUserInfo(userID)
     if(!userInfo){
         message = await makeMessage(false, "No user with this id!", "Þú hefur ekki aðgang að þessum upplýsingum.")
-    } else if(!userInfo.firstsurveytaken) {
+    } 
+    // else if(!userInfo.termsof){
+    //     message = await makeMessage(false, "Not agreed to terms.", "Verður að samþykkja notendaskilmála til þess að geta tekið kannanir.")
+    //     message.title = "Notendaskilmálar!"
+    // }
+    else if(!userInfo.firstsurveytaken) {
         message.feed = surveyID == -1 ? await getFirstSurvey():[]
         message.success = message.feed && (message.feed.length > 0) ? true:false
     } else {
@@ -664,6 +669,8 @@ async function getUserInfo(userID){
         } else {
             userInfo = rows[0]
             userInfo.surveysTaken = rows[0].surveystaken.length
+            userInfo.friendsInvited = rows[0].myfriends.length
+            userInfo.friendsInviteLeft = maxFriends - rows[0].myfriends.length
         }
     }catch(error){
         console.log(error)
