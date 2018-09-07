@@ -671,8 +671,7 @@ async function getUserInfo(userID){
             userInfo.friendsInviteLeft = maxFriends - rows[0].myfriends.length
             userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
             userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
-            // userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
-            userInfo.prizeMoneyLeft = 50000000
+            userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
             userInfo.myInformation = [
                 {
                     text: "Kannanir teknar: ",
