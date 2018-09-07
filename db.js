@@ -211,9 +211,7 @@ async function feed(userID, surveyID, testID){
         message.customAlert = userInfo.customalert
         await deleteCustomAlert(userID)
     }
-    userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
-    userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
-    userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
+    
     message.userInfo = userInfo
     return message
 }
@@ -671,6 +669,27 @@ async function getUserInfo(userID){
             userInfo.surveysTaken = rows[0].surveystaken.length
             userInfo.friendsInvited = rows[0].myfriends.length
             userInfo.friendsInviteLeft = maxFriends - rows[0].myfriends.length
+            userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
+            userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
+            userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
+            userInfo.myInformation = [
+                {
+                    text: "Kannanir teknar: ",
+                    data: userInfo.surveysTaken
+                },
+                {
+                    text: "Heildarupphæð safnað: ",
+                    data: userInfo.prizeMoneyEarned
+                },
+                {
+                    text: "Vinum boðið: ",
+                    data: userInfo.friendsInvited
+                },
+                {
+                    text: "Getur boðið: ",
+                    data: userInfo.friendsInviteLeft
+                }
+            ]
         }
     }catch(error){
         console.log(error)
