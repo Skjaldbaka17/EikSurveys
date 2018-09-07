@@ -679,15 +679,15 @@ async function getUserInfo(userID){
                 },
                 {
                     text: "Heildarupphæð safnað: ",
-                    data: `${userInfo.prizeMoneyEarned}`
+                    data: `${userInfo.prizeMoneyEarned} kr.`
                 },
                 {
                     text: "Vinum boðið: ",
-                    data: `${userInfo.friendsInvited}`
+                    data: `${userInfo.friendsInvited} vinir`
                 },
                 {
-                    text: "Getur boðið: ",
-                    data: `${userInfo.friendsInviteLeft}`
+                    text: "Átt inni: ",
+                    data: `${userInfo.friendsInviteLeft} vini`
                 }
             ]
         }
