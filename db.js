@@ -671,7 +671,8 @@ async function getUserInfo(userID){
             userInfo.friendsInviteLeft = maxFriends - rows[0].myfriends.length
             userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
             userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
-            userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
+            // userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
+            userInfo.prizeMoneyLeft = 50000
             userInfo.myInformation = [
                 {
                     text: "Kannanir teknar: ",
@@ -679,8 +680,7 @@ async function getUserInfo(userID){
                 },
                 {
                     text: "Heildarupphæð safnað: ",
-                    // data: `${userInfo.prizeMoneyEarned} kr.`
-                    data: "50000 kr."
+                    data: `${userInfo.prizeMoneyEarned} kr.`
                 },
                 {
                     text: "Vinum boðið: ",
