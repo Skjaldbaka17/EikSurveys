@@ -499,10 +499,14 @@ async function rewardFriend(invitationKey, userID, userInfo){
         console.log(error)
     }finally{
         await client.end()
-        console.log("the Friend:", friend)
+        console.log("the Friend:", friend.deviceToken)
         if(friend && friend.devicetoken){
             console.log("HEREONEMAN")
+            try{
             pushNotifications.friendFinishedSurvey(friend.devicetoken, userInfo.name)
+        }catch(error){
+            console.log("Push Error:", error)
+        }
             console.log("HERETwoMAN")
         }
     }
