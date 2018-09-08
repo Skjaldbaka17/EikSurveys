@@ -488,7 +488,7 @@ async function rewardFriend(invitationKey, userID, userInfo){
     var client = new Client({connectionString})
     var friend = false
     var query = `update ${userDBName} set myfriends = array_append(myfriends, ${userID}), 
-    prizemoneyearned = prizemoneyearned+${friendReward} where myinvitationkey = '${invitationKey}' returning *`
+    prizemoneyearned = prizemoneyearned+${friendReward}, devicetoken = devicetoken where myinvitationkey = '${invitationKey}' returning *`
     console.log("RewardFriendFunctionQuery:", query)
     await client.connect()
     try{
@@ -499,7 +499,9 @@ async function rewardFriend(invitationKey, userID, userInfo){
         console.log(error)
     }finally{
         await client.end()
+        console.log("the Friend:", friend)
         if(friend && friend.devicetoken){
+            console.log()
             pushNotifications.friendFinishedSurvey(friend.devicetoken, userInfo.name)
         }
     }
