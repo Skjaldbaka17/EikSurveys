@@ -5,6 +5,7 @@ const { getUserInfo } = require('./db')
 const {sendNotification} = require('./pushNotifications')
 const sendCustomMessage = require('./customAlert')
 const xss = require("xss");
+var easyWorker = require('./easyWorker')
 
 
 var operationDetails = {}
@@ -27,7 +28,16 @@ async function createSurvey(req, res){
         res.render('customMessage')
     } else if (thePassword == "customPushNot"){
         res.render('customPushNot')
-    } else {
+    } else if(thePassword == "addTime") {
+        var t = await easyWorker.addTime()
+        
+        var themessage = "Náði að bæta við tíma!"
+        if(!t){
+            theMessage = "Náði ekki að bæta við tíma."
+        }
+        res.render('surveyCreated', {themessage})
+    }
+    else {
         res.render('createSurvey')
     }
 }

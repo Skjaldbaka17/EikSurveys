@@ -1,4 +1,12 @@
 create table surveyanswers{
-    answer1 text not null default '',
-    answer2 varchar(255) not null default ''
+            surveyid integer not null,
+            userid integer not null,
+            timerequired double precision[],
+            timespent double precision[], 
+            toofast boolean[],
+            answer1,
+            answer2,
+            .
+            .
+            .
 }

@@ -16,7 +16,8 @@ async function createSurvey(data){
     var query = `insert into ${surveysDB} (name, prize, about, questions, maxamount, minamount, maxage, 
     minage, sex, socialposition, answerstable, location, numberofquestions, needinvitation) values($1, $2, $3, $4, $5, $6, $7, $8, 
         $9, $10, $11, $12, $13, $14) returning *`
-    var values = [data.name , data.prize, data.about, JSON.stringify(data.questions), data.maxamount, data.minamount, data.maxage, data.minage,
+    var questionsWithTimeReq = await qWithTimeRequired(data.questions)
+    var values = [data.name , data.prize, data.about, JSON.stringify(questionsWithTimeReq), data.maxamount, data.minamount, data.maxage, data.minage,
     data.sex, data.socialposition, answersTableName, data.location, data.numberOfQuestions, data.needInvitation]
     console.log(query)
 
@@ -49,6 +50,51 @@ async function createSurvey(data){
         }
         return message
     }
+}
+
+async function addTimeToAllSurveys(){
+    var client = new Client({connectionString})
+    var query = `select surveyid, questions from ${surveysDB}`
+    await client.connect()
+    var success = true
+    try{
+        var result = await client.query(query)
+        var { rows } = result
+        var allThings = []
+        for(var i = 0; i < rows.length; i++){
+            var questions = await qWithTimeRequired(rows[i].questions)
+            allThings.push({id:rows[i].surveyid, questions:questions})
+        }
+        for(var i = 0; i < allThings.length; i++){
+            query = `update ${surveysDB} set questions = '${JSON.stringify(allThings[i].questions)}' where surveyid = ${allThings[i].id}`
+            console.log(query)
+            await client.query(query)
+        }
+    }catch(error){
+        console.log(error)
+        success = false
+    }finally{
+        await client.end()
+        return success
+    }
+}
+
+async function qWithTimeRequired(questions){
+    var newQuestions = questions
+    for(var i = 0; i < questions.length; i++){
+        var time = 0.0
+        if(questions[i].question){
+            var words = questions[i].question.split(" ")
+            time += parseInt(words.length/4.0)
+        }
+        if(Array.isArray(questions[i].options)){
+            time += 0.5*questions[i].options.length
+        } else {
+            time += 2.0
+        }
+        newQuestions[i].timeRequired = time
+    }
+    return newQuestions
 }
 
 async function notifyUsersOfNewSurvey(survey){
@@ -163,6 +209,6 @@ async function makeMessage(success, error, message){
 }
 
 
-var database = {createSurvey}
+var database = {createSurvey, addTimeToAllSurveys}
 
 module.exports = database
