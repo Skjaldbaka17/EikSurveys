@@ -565,7 +565,7 @@ async function getPaid(data){
     var query = `insert into ${paymentDB}(money, aurnumber, bankaccount, ssn, userid) values($1, $2, $3, $4, $5) returning *`
     var values = [data.amount, data.aurPhone, data.bankAccount, data.ssn, data.userID]
     await client.connect()
-
+    console.log("Get Paid Query:", query)
     try{
         const result = await client.query(query, values)
         const { rows } = result
