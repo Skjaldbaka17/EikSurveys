@@ -6,6 +6,7 @@ const {sendNotification} = require('./pushNotifications')
 const sendCustomMessage = require('./customAlert')
 const xss = require("xss");
 var easyWorker = require('./easyWorker')
+var sms = require('./sendSMS')
 
 
 var operationDetails = {}
@@ -36,9 +37,43 @@ async function createSurvey(req, res){
             theMessage = "Náði ekki að bæta við tíma."
         }
         res.render('surveyCreated', {themessage})
+    } else if(thePassword == "sendSMS"){
+        res.render('customSMS')
     }
     else {
         res.render('createSurvey')
+    }
+}
+
+async function customSMS(req, res){
+    const {
+        body: {
+            userID = false,
+            message = false
+        }
+    } = req
+    const theUserID = xss(userID)
+    const theMessage = xss(message)
+    if(!(theUserID&&theMessage)){
+        res.redirect('/eik')
+    } else {
+        var userInfo = await getUserInfo(theUserID)
+        if(userInfo){
+            console.log("IsItThere:",userInfo.phone)
+            var success = true
+            if(userInfo && userInfo.phone){
+                try{
+                sms.sendSMS(userInfo.phone, message, "Eik")}
+                catch(error){
+                    success = false
+                    console.log(error)
+                }
+            }
+            var themessage = "Heppnaðist!"
+            res.render('surveyCreated', {themessage})
+        } else {
+            res.send("Could Not MakeIT")
+        }
     }
 }
 
@@ -186,4 +221,5 @@ router.post('/createIT', catchErrors(createIT))
 router.get('/surveyCreated', function(req, res){res.render('surveyCreated')})
 router.post('/customPushNot', catchErrors(customPushNot))
 router.post('/customMessage', catchErrors(customMessage))
+router.post('/customSMS', catchErrors(customSMS))
 module.exports = router

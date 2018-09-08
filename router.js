@@ -218,7 +218,7 @@ async function getPaid(req, res){
             aurPhone = ''
         }
     } = req.body
-
+    
     if((userID&&amount)&&(ssn&&bankAccount || aurPhone)){
         const data = {
             amount: amount,
