@@ -175,6 +175,7 @@ async function submitAnswers(req, res){
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
         var success = true
+        console.log("The answer:", answers[0].answers)
         if(survey.firstsurvey){
             var msg = await immediateAnswers.verifyPhone(userID, answers[answers.length-1].answer)
             success = msg.success
