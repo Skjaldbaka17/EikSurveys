@@ -25,9 +25,9 @@ async function friendFinishedSurvey(deviceToken, name){
   console.log("Trying:", deviceToken)
   notification.topic = "YellowBus.Eik";
   // Replace deviceToken with your particular token:
-  let deviceToken = deviceToken;
+  var thedeviceToken = deviceToken;
   // Send the actual notification
-  apnProvider.send(notification, deviceToken).then( result => {
+  apnProvider.send(notification, thedeviceToken).then( result => {
     // Show the result of the send operation:
     console.log(result);
   });
