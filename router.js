@@ -191,13 +191,14 @@ async function submitAnswers(req, res){
 }
 
 async function getTimeStuff(answers){
+    // Console.log("THE ANSWERS:", answers)
     var timeSpent = []
     var timeRequired = []
     var tooFast = []
     for(var i = 0; i < answers.length; i++){
-        timeSpent.push(answers.timeSpent)
-        timeRequired.push(answers.timeRequired)
-        tooFast.push(answers.tooFast)
+        timeSpent.push(answers[i].timeSpent)
+        timeRequired.push(answers[i].timeRequired)
+        tooFast.push(answers[i].tooFast)
     }
     return {
         timeSpent: timeSpent,
