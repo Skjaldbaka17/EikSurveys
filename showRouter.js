@@ -198,6 +198,12 @@ async function createIT(req, res){
     else {res.redirect('back')}
 }
 
+async function privacyPolicy(req, res){
+    console.log("Here")
+    res.render('privacyPolicy')
+    res.end()
+}
+
 async function makeOperationDetails(success, error, message){
     operationDetails.success = success
     operationDetails.error = error
@@ -216,6 +222,7 @@ function catchErrors(fn) {
 
 router.use(catchErrors(cleanUp))
 router.get('/eik', catchErrors(home))
+router.get('/eik/skilmalar', catchErrors(privacyPolicy))
 router.post('/createSurvey', catchErrors(createSurvey))
 router.post('/createIT', catchErrors(createIT))
 router.get('/surveyCreated', function(req, res){res.render('surveyCreated')})
