@@ -3,8 +3,8 @@ const express = require('express')
 const router = express.Router()
 const db = require('./db')
 const immediateAnswers = require('./immediateAnswers')
-// const bcrypt = require('bcrypt');
-// const saltRounds = 11;
+const bcrypt = require('bcrypt');
+const saltRounds = 11;
 
 var operationDetails = {}
 const minimumFirstAmount = 5000
@@ -80,7 +80,7 @@ async function signUp(req, res){
 }
 
 async function hashPassword(password){
-    return password
+    return await bcrypt.hash(password, saltRounds)
 }
 
 async function logout(req, res){
