@@ -403,7 +403,6 @@ async function takeSurvey(userID, surveyID){
 }
 
 async function submitAnswers(userID, survey, answers, timeStuff){
-    try{
         var message = await saveAnswers(answers, survey, userID, timeStuff)
         if(message.success){
             console.log("HERE6")
@@ -414,7 +413,6 @@ async function submitAnswers(userID, survey, answers, timeStuff){
             console.log("HERE8")
             return message
         }
-    }
 }
 
 async function updateSurveyAndUser(userID, survey){
