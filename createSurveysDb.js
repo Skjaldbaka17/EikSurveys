@@ -170,6 +170,7 @@ async function createAnswersTable(questions, name){
     console.log("Questions:", questions)
     try{
         var query = `Create table ${name}(
+            surveytaken TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             surveyid integer not null,
             userid integer not null,
             timerequired double precision[],
