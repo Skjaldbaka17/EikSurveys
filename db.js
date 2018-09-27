@@ -51,7 +51,7 @@ async function login(data){
 async function comparePass(data){
     var message = {}
     var client = new Client({connectionString})
-    var query = `select * from ${userDBName} where email = ${data.email}`
+    var query = `select * from ${userDBName} where email = '${data.email}'`
     await client.connect()
     try{
         var result = await client.query(query)
