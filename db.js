@@ -2,6 +2,7 @@ require('dotenv').config();
 const { Client } = require('pg');
 const { onlyLetters } = require('./regex')
 const pushNotifications = require('./pushNotifications')
+const bcrypt = require('bcrypt')
 
 const connectionString = process.env.DATABASE_URL;
 const userDBName = process.env.USERDBNAME
@@ -15,23 +16,57 @@ const testingInvitation = "FOLF101"
 async function login(data){
     var message = {}
     var client = new Client({connectionString})
-    await client.connect()
+    message = await comparePass(data)
+    if(message.success){
+        await client.connect()
 
+        try{
+            var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
+            const result = await client.query(query)
+            const {rows} = result
+            if(!rows[0]){
+                message.success = false
+                message.error = "Lykilorð eða netfang er vitlaust"
+            } else {
+                message.success = true
+                message.error = ""
+                message.userID = rows[0].userid
+            }
+        }catch(error){
+            message.success = false
+            message.error = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+        }finally{
+            await client.end()
+            return message
+        }
+    } else{
+        if(!message.message){
+            message.message = "Villa við vinnslu á gögnum"
+            message.title = "Villa!"
+        }
+        return message
+    }
+}
+
+async function comparePass(data){
+    var message = {}
+    var client = new Client({connectionString})
+    var query = `select * from ${userDBName} where email = ${data.email}`
+    await client.connect()
     try{
-        var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
-        const result = await client.query(query)
-        const {rows} = result
+        var result = await client.query(query)
+        const { rows } = result
         if(!rows[0]){
             message.success = false
-            message.error = "Lykilorð eða netfang er vitlaust"
+            message.message = "Lykilorð eða netfang er vitlaust"
+            message.title = "Villa?"
         } else {
-            message.success = true
-            message.error = ""
-            message.userID = rows[0].userid
+            message.success = await bcrypt.compare(data.password, rows[0].password)
         }
     }catch(error){
-        message.success = false
-        message.error = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+        console.log(error)
+        message = await makeMessage(false, error, "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar.")
+        message.title = "Villa!"
     }finally{
         await client.end()
         return message

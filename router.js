@@ -24,7 +24,7 @@ async function login(req, res){
         try {
             const data = {
                 email: email,
-                password: await hashPassword(password),
+                password: password,
             }
             const message = await db.login(data)
             operationDetails.message = message.error
