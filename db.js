@@ -21,7 +21,7 @@ async function login(data){
         await client.connect()
 
         try{
-            var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
+            var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' returning *`
             const result = await client.query(query)
             const {rows} = result
             if(!rows[0]){
@@ -52,11 +52,13 @@ async function comparePass(data){
     var message = {}
     var client = new Client({connectionString})
     var query = `select * from ${userDBName} where email = '${data.email}'`
+    console.log(query)
     await client.connect()
     try{
         var result = await client.query(query)
         const { rows } = result
         if(!rows[0]){
+            console.log("NooneHer")
             message.success = false
             message.message = "Lykilorð eða netfang er vitlaust"
             message.title = "Villa?"
