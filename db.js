@@ -403,15 +403,17 @@ async function takeSurvey(userID, surveyID){
 }
 
 async function submitAnswers(userID, survey, answers, timeStuff){
-    var message = await saveAnswers(answers, survey, userID, timeStuff)
-    if(message.success){
-        console.log("HERE6")
-        updateSurveyAndUser(userID, survey)
-        console.log("HERE7")
-        return message
-    } else {
-        console.log("HERE8")
-        return message
+    try{
+        var message = await saveAnswers(answers, survey, userID, timeStuff)
+        if(message.success){
+            console.log("HERE6")
+            updateSurveyAndUser(userID, survey)
+            console.log("HERE7")
+            return message
+        } else {
+            console.log("HERE8")
+            return message
+        }
     }
 }
 
@@ -536,7 +538,9 @@ async function rewardFriend(invitationKey, userID, userInfo){
     try{
         const result = await client.query(query)
         const { rows } = result
-        friend = rows[0]
+        if(rows[0]){
+            friend = rows[0]
+        }
     }catch(error){
         console.log(error)
     }finally{
