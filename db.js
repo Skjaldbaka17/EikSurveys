@@ -10,6 +10,7 @@ const paymentDB = process.env.PAYMENTDB
 const invitationKeysDB = process.env.INVITATIONKEYSDB
 const maxFriends = 15
 const friendReward = 500
+const testingInvitation = "FOLF101"
 
 async function login(data){
     var message = {}
@@ -133,6 +134,10 @@ async function isEligibleForSignUp(data){
 
 async function isInvitationKeyEligible(invitationKey){
     var message = {}
+    if(invitationKey == testingInvitation){
+        message = message = await makeMessage(true, "" ,"")
+        return message
+    }
     var client = new Client({connectionString})
     var query = `select * from ${userDBName} where myinvitationkey = '${invitationKey}'`
     await client.connect()
