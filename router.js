@@ -4,7 +4,7 @@ const router = express.Router()
 const db = require('./db')
 const immediateAnswers = require('./immediateAnswers')
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const saltRounds = 11;
 
 var operationDetails = {}
 const minimumFirstAmount = 5000
