@@ -1,6 +1,9 @@
 {
   "name": "eik",
   "version": "1.0.0",
+  "engines": {
+    "node": "10.10.0"
+  },
   "description": "A server for a survey based mobile app",
   "main": "app.js",
   "dependencies": {
