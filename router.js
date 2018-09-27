@@ -55,11 +55,13 @@ async function signUp(req, res){
         operationDetails.message = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
     }else{
         try {
+            console.log("HERE")
             const data = {
                 email: email,
                 password: await hashPassword(password),
                 invitationKey: invitationKey
             }
+            console.log("There")
             const message = await db.signUp(data)
             console.log("TheMessage:", message)
             operationDetails.message = message.message
