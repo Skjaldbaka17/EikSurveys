@@ -723,6 +723,7 @@ async function getUserInfo(userID){
             userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
             userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
             userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
+            var friendsText = userInfo.friendsInviteLeft == 1 ? "vin":"vini"
             userInfo.myInformation = [
                 {
                     text: "Kannanir teknar: ",
@@ -738,7 +739,7 @@ async function getUserInfo(userID){
                 },
                 {
                     text: "Átt inni: ",
-                    data: `${userInfo.friendsInviteLeft} vini`
+                    data: `${userInfo.friendsInviteLeft} ${friendsText}`
                 }
             ]
         }
