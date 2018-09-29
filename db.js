@@ -9,7 +9,7 @@ const userDBName = process.env.USERDBNAME
 const surveysDB = process.env.SURVEYSDB
 const paymentDB = process.env.PAYMENTDB
 const invitationKeysDB = process.env.INVITATIONKEYSDB
-const maxFriends = 15
+const maxFriends = 1
 const friendReward = 500
 const testingInvitation = "FOLF101"
 
