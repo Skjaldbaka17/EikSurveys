@@ -16,7 +16,7 @@ async function sendSMS(phone, message, sender){
           recipients: [{msisdn: phone}],
         },
       }, function (err, r, body) {
-        console.log(err ? err : body);
+        console.log("Símadæmið: ", err ? err : body);
       });
 }
 
