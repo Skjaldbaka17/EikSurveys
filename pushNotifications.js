@@ -81,7 +81,7 @@ async function sendNotification(deviceTokens, message){
   notification.badge = 1;
   notification.sound = "ping.aiff";
   notification.alert = message;
-  notification.payload = {'messageFrom': 'Eik'};
+  notification.payload = {'messageFrom': 'Eik', "description": "Þetta er titill!!"};
   console.log("Trying:", deviceTokens)
   notification.topic = "YellowBus.Eik";
   if(Array.isArray(deviceTokens)){
