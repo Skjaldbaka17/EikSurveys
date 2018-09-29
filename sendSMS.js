@@ -3,6 +3,7 @@ var request = require('request');  // npm install request
 
 
 async function sendSMS(phone, message, sender){
+  console.log("Trying SMS:", phone, message, sender)
     request.post({
         url: 'https://gatewayapi.com/rest/mtsms',
         oauth: {
