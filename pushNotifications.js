@@ -101,6 +101,7 @@ async function sendNotification(deviceTokens, message){
       apnProvider.send(notification, deviceToken).then( result => {
         // Show the result of the send operation:
         console.log(result);
+        console.log("The Things:", result.failed)
       });
     }
   await apnProvider.shutdown();
