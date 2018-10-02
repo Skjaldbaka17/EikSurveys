@@ -85,12 +85,15 @@ async function qWithTimeRequired(questions){
         var time = 0.0
         if(questions[i].question){
             var words = questions[i].question.split(" ")
-            time += parseInt(words.length/4.0)
+            time += Math.round(words.length/6.0)
         }
         if(Array.isArray(questions[i].options)){
-            time += 0.5*questions[i].options.length
+            for(var j = 0; j < questions[i].options.length; j++){
+                var words = questions[i].options[j].split(" ")
+                time += Math.round(words.length/6.0)
+            }
         } else {
-            time += 2.0
+            time += 1.5
         }
         newQuestions[i].timeRequired = time
     }
