@@ -66,7 +66,7 @@ async function addTimeToAllSurveys(){
             allThings.push({id:rows[i].surveyid, questions:questions})
         }
         for(var i = 0; i < allThings.length; i++){
-            query = `update ${surveysDB} set (questions) = ($1) where surveyid = ${allThings[i].id}`
+            query = `update ${surveysDB} set questions = $1 where surveyid = ${allThings[i].id}`
             var values = [JSON.stringify(allThings[i].questions)]
             console.log(query)
             await client.query(query, values)
