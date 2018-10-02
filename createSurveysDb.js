@@ -79,18 +79,24 @@ async function addTimeToAllSurveys(){
     }
 }
 
+function round(value, step) {
+    step || (step = 1.0);
+    var inv = 1.0 / step;
+    return Math.round(value * inv) / inv;
+}
+
 async function qWithTimeRequired(questions){
     var newQuestions = questions
     for(var i = 0; i < questions.length; i++){
         var time = 0.0
         if(questions[i].question){
             var words = questions[i].question.split(" ")
-            time += Math.round(words.length/6.0)
+            time += round(words.length/6.0, 0.5)
         }
         if(Array.isArray(questions[i].options)){
             for(var j = 0; j < questions[i].options.length; j++){
                 var words = questions[i].options[j].split(" ")
-                time += Math.round(words.length/6.0)
+                time += round(words.length/6.0, 0.5)
             }
         } else {
             time += 1.5
