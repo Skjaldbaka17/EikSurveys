@@ -42,9 +42,11 @@ async function createSurvey(req, res){
     }
     else if(thePassword == "Einar"){
         res.render('createSurvey')
-    } else if (thePassword == "addAnswersTableAndNotify"){
+    } else if (thePassword == "addAnswersTable"){
         res.render('addAnswerTable')
-    } 
+    } else if(thePassword == "notifyUsersOfSurvey"){
+        res.render('notifyUsersOfSurvey')
+    }
     else {
         var themessage = "Ekki til"
         res.render('surveyCreated', {themessage})
@@ -148,8 +150,24 @@ async function addAnswerTable(req, res){
     console.log("The Body:", req.body)
     const {
         body: {
-            surveyID = false,
-            notify = false
+            surveyID = false
+        }
+    } = req
+    if(!surveyID){
+        console.log("Ekki nægar upplýsingar")
+        await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
+    } else{
+        message = await database.createAnswersTableFor(surveyID)
+        await makeOperationDetails(message.success, message.error, message.message)
+    }
+    var themessage = operationDetails.message
+    res.render('surveyCreated', {themessage})
+}
+
+async function notifyUsersOfSurvey(req, res){
+    const {
+        body: {
+            surveyID = false
         }
     } = req
     if(!surveyID){
@@ -259,4 +277,5 @@ router.post('/customPushNot', catchErrors(customPushNot))
 router.post('/customMessage', catchErrors(customMessage))
 router.post('/customSMS', catchErrors(customSMS))
 router.post('/addAnswerTable', catchErrors(addAnswerTable))
+router.post('/notifyUsersOfSurvey', catchErrors(notifyUsersOfSurvey))
 module.exports = router

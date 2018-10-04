@@ -107,6 +107,50 @@ async function qWithTimeRequired(questions){
     return newQuestions
 }
 
+async function notifyUsersOfSurvey(surveyID){
+    var deviceTokens = []
+    var client = new Client({connectionString})
+    var query = `select * from ${surveysDB} where surveyid = ${surveyID}`
+    await client.connect()
+    var message = {}
+
+    try{
+        var result = await client.query(query)
+        var {rows} = result
+        if(!rows[0]){
+            message = await makeMessage(false, "Error", "No survey with given ID")
+        } else {
+            query = `select devicetoken from ${usersDB} where 
+            devicetoken is not null and
+            age >= ${survey.minage} and age <= ${survey.maxage} and
+            sex = any ('{${survey.sex}}') and socialposition = any ('{${survey.socialposition}}') and
+            location = any ('{${survey.location}}') and not userid = any ('{${survey.takenby}}')`
+            try{
+                result = await client.query(query)
+                var newrows = result.rows
+                for(var i = 0; i < newrows.length; i++){
+                    deviceTokens.push(newrows[i].devicetoken)
+                }
+            } catch(error){
+                console.log(error)
+                message = await makeMessage(false, error, "Kerfisvilla við að ná í deviceTokens! Með query:", query)
+            }
+        }
+    }catch(error){
+        console.log(error)
+        message = await makeMessage(false, error, "Kerfisvilla við að ná í könnun tengda surveID: " + surveyID)
+    }finally{
+        await client.end()
+        if(deviceTokens.length > 0){
+            try{
+                pushNotifications.newSurveyAvailable(deviceTokens, rows[0].name, rows[0].prize)
+            } catch(error){
+                console.log("Villan:", error)
+            }
+        }
+    }
+}
+
 async function notifyUsersOfNewSurvey(survey){
     console.log("Notifying")
     var deviceTokens = []
