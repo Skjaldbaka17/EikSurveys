@@ -193,8 +193,12 @@ async function createIT(req, res){
             amountOfInvitationKeys: amountOfInvitationKeys < 1000 ? amountOfInvitationKeys:1000
         }
         console.log("HERE3")
-        const message = await database.createSurvey(data)
-        await makeOperationDetails(message.success, message.error, message.message)
+        try{
+            const message = await database.createSurvey(data)
+            await makeOperationDetails(message.success, message.error, message.message)
+        } catch(error){
+            console.log("Errror", error)
+        }
     }
     var themessage = "Könnun hefur verið bætt í gagnasafnið"
     if(operationDetails.success){res.render('surveyCreated',{themessage})}
