@@ -133,6 +133,7 @@ async function notifyUsersOfSurvey(surveyID){
                 for(var i = 0; i < newrows.length; i++){
                     deviceTokens.push(newrows[i].devicetoken)
                 }
+                message = await makeMessage(true, "", deviceTokens.count > 0 ? "Sendi á eftirfarandi: " + deviceTokens:"Engin sem getur tekið þessa könnun")
             } catch(error){
                 console.log(error)
                 message = await makeMessage(false, error, "Kerfisvilla við að ná í deviceTokens! Með query:", query)
@@ -145,7 +146,7 @@ async function notifyUsersOfSurvey(surveyID){
         await client.end()
         if(deviceTokens.length > 0){
             try{
-                console.log(rows[0].name, rows[0].prize)
+                console.log(deviceTokens, rows[0].name, rows[0].prize)
                 pushNotifications.newSurveyAvailable(deviceTokens, rows[0].name, rows[0].prize)
                 console.log("After")
             } catch(error){
