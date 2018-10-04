@@ -197,6 +197,7 @@ async function createAnswersTableFor(surveyID){
     }
 }
 
+var numbers = ["zero", "one"]
 async function createAnswersTable(questions, name){
     var message = {}
     var client = new Client({connectionString})
@@ -211,7 +212,7 @@ async function createAnswersTable(questions, name){
             toofast boolean[], `
 
         for(var i = 0; i < questions.length; i++){
-            query += ( `${i}` + await onlyLetters(questions[i].question)) + " TEXT" + (questions[i].multipleAnswers ? "[]":"")
+            query += ( `n${i}` + await onlyLetters(questions[i].question)) + " TEXT" + (questions[i].multipleAnswers ? "[]":"")
             if(i < questions.length - 1){
                 query += ","
             } else {query += " )"}
