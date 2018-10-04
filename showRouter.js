@@ -175,7 +175,7 @@ async function notifyUsersOfSurvey(req, res){
         console.log("Ekki nægar upplýsingar")
         await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
     } else{
-        message = await database.createAnswersTableFor(surveyID)
+        message = await database.notifyUsersOfSurvey(surveyID)
         await makeOperationDetails(message.success, message.error, message.message)
     }
     console.log(message)

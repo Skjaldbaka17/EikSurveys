@@ -288,6 +288,6 @@ async function makeMessage(success, error, message){
 }
 
 
-var database = {createSurvey, addTimeToAllSurveys, createAnswersTableFor}
+var database = {createSurvey, addTimeToAllSurveys, createAnswersTableFor, notifyUsersOfSurvey}
 
 module.exports = database
