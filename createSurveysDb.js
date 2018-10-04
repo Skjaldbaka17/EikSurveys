@@ -130,7 +130,7 @@ async function notifyUsersOfNewSurvey(survey){
         await client.end()
         if(deviceTokens.length > 0){
             try{
-                pushNotifications.newSurveyAvailable(deviceTokens)
+                pushNotifications.newSurveyAvailable(deviceTokens, survey.name, survey.prize)
             } catch(error){
                 console.log("Villan:", error)
             }
@@ -173,6 +173,29 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
+
+async function createAnswersTableFor(surveyID){
+    var client = new Client({connectionString})
+    var query = `select * from ${surveysDB} where surveyid = ${surveyID}`
+    var message = {}
+    await client.connect()
+    try{
+        var result = await client.query(query)
+        const {rows} = result
+        if(!rows[0]){
+            await makeMessage(false, "No Survey with given ID", "")
+        } else {
+            message = await createAnswersTable(rows[0].questions, rows[0].answerstable)
+            message.message = message.success ? "Þetta Heppnaðist":"Heppnaðist ekki"
+        }
+    }catch(error){
+        console.log(error)
+        await makeMessage(false, error, "Kerfisvilla!")
+    }finally{
+        await client.end()
+        return message
+    }
+}
 
 async function createAnswersTable(questions, name){
     var message = {}
@@ -220,6 +243,6 @@ async function makeMessage(success, error, message){
 }
 
 
-var database = {createSurvey, addTimeToAllSurveys}
+var database = {createSurvey, addTimeToAllSurveys, createAnswersTableFor}
 
 module.exports = database

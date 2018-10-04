@@ -42,7 +42,7 @@ async function newSurveyAvailable(deviceTokens, nameOfSurvey, prizeForSurvey){
   notification.expiry = Math.floor(Date.now() / 1000) + 24 * 3600; // will expire in 24 hours from now
   notification.badge = 1;
   notification.sound = "ping.aiff";
-  notification.alert = "Ný könnun í boði fyrir þig!";
+  notification.alert = `Ný könnun í boði fyrir þig${ !nameOfSurvey ? "":": " + nameOfSurvey}. \nTaktu hana og fáðu ${!prizeForSurvey ? prizeForSurvey + "kr. í ":""}verðlaun!`;
   notification.payload = {'messageFrom': 'Eik'};
   console.log("Trying:", deviceTokens)
 

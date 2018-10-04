@@ -1,0 +1,13 @@
+<%- include('header') -%>
+<link rel="stylesheet" href="customPushNot.css">
+<h1>Custom SMS</h1>
+<form action="/addAnswerTable" method="POST">
+    <div id="inputs">
+        <label for="">SurveyID</label>
+        <input type="number" name="surveyID">
+        <label for="">PushNots!</label>
+        <input type="checkbox" name="notify">
+    </div>
+    <button type="submit">Senda SMS</button>
+</form>
+<%- include('footer') -%>
