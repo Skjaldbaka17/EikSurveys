@@ -120,20 +120,20 @@ async function notifyUsersOfSurvey(surveyID){
         if(!rows[0]){
             message = await makeMessage(false, "Error", "No survey with given ID")
         } else {
-            console.log("Almost There!!")
             var survey = rows[0]
             query = `select devicetoken from ${usersDB} where 
             devicetoken is not null and
             age >= ${survey.minage} and age <= ${survey.maxage} and
             sex = any ('{${survey.sex}}') and socialposition = any ('{${survey.socialposition}}') and
             location = any ('{${survey.location}}') and not userid = any ('{${survey.takenby}}')`
+            console.log("Query for device tokens:", query)
             try{
                 result = await client.query(query)
                 var newrows = result.rows
                 for(var i = 0; i < newrows.length; i++){
                     deviceTokens.push(newrows[i].devicetoken)
                 }
-                message = await makeMessage(true, "", deviceTokens.count > 0 ? "Sendi á eftirfarandi: " + deviceTokens:"Engin sem getur tekið þessa könnun")
+                message = await makeMessage(true, "", "")
             } catch(error){
                 console.log(error)
                 message = await makeMessage(false, error, "Kerfisvilla við að ná í deviceTokens! Með query:", query)
@@ -152,6 +152,9 @@ async function notifyUsersOfSurvey(surveyID){
             } catch(error){
                 console.log("Villan:", error)
             }
+            message.message = "Sendi á eftirfarandi: " + deviceTokens
+        } else if(message.success){
+            message = await makeMessage(true, "", "Engin sem getur tekið þessa könnun") 
         }
         console.log("The Message inside:", message)
         return message
