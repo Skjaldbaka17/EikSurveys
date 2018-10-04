@@ -120,6 +120,7 @@ async function notifyUsersOfSurvey(surveyID){
         if(!rows[0]){
             message = await makeMessage(false, "Error", "No survey with given ID")
         } else {
+            console.log("Almost There!!")
             var survey = rows[0]
             query = `select devicetoken from ${usersDB} where 
             devicetoken is not null and
