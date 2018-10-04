@@ -40,8 +40,11 @@ async function createSurvey(req, res){
     } else if(thePassword == "sendSMS"){
         res.render('customSMS')
     }
-    else {
+    else if(thePassword == "Einar"){
         res.render('createSurvey')
+    } else {
+        var themessage = "Ekki til"
+        res.render('surveyCreated', {themessage})
     }
 }
 
