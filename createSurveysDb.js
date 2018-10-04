@@ -150,6 +150,7 @@ async function notifyUsersOfSurvey(surveyID){
                 console.log("Villan:", error)
             }
         }
+        return message
     }
 }
 
