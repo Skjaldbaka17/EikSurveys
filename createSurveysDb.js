@@ -145,11 +145,14 @@ async function notifyUsersOfSurvey(surveyID){
         await client.end()
         if(deviceTokens.length > 0){
             try{
+                console.log(rows[0].name, rows[0].prize)
                 pushNotifications.newSurveyAvailable(deviceTokens, rows[0].name, rows[0].prize)
+                console.log("After")
             } catch(error){
                 console.log("Villan:", error)
             }
         }
+        console.log("The Message inside:", message)
         return message
     }
 }
