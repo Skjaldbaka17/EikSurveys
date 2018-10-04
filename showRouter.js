@@ -165,6 +165,7 @@ async function addAnswerTable(req, res){
 }
 
 async function notifyUsersOfSurvey(req, res){
+    var message = {}
     const {
         body: {
             surveyID = false
@@ -177,6 +178,7 @@ async function notifyUsersOfSurvey(req, res){
         message = await database.createAnswersTableFor(surveyID)
         await makeOperationDetails(message.success, message.error, message.message)
     }
+    console.log(message)
     var themessage = operationDetails.message
     res.render('surveyCreated', {themessage})
 }
