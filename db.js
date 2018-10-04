@@ -495,7 +495,7 @@ async function saveAnswers(answers, survey, userID, timeStuff){
         if(answers[i].multipleAnswers){
             values.push(answers[i].answers)
         } else { values.push(answers[i].answer)}
-        query += await onlyLetters(answers[i].question)
+        query += `no${i}` + await onlyLetters(answers[i].question)
         value += `$${i+6}`
         if(i < answers.length-1){
             query += ","

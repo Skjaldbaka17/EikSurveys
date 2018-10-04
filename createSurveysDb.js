@@ -212,7 +212,7 @@ async function createAnswersTable(questions, name){
             toofast boolean[], `
 
         for(var i = 0; i < questions.length; i++){
-            query += ( `n${i}` + await onlyLetters(questions[i].question)) + " TEXT" + (questions[i].multipleAnswers ? "[]":"")
+            query += ( `no${i}` + await onlyLetters(questions[i].question)) + " TEXT" + (questions[i].multipleAnswers ? "[]":"")
             if(i < questions.length - 1){
                 query += ","
             } else {query += " )"}
