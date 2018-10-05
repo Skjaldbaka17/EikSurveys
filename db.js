@@ -172,7 +172,11 @@ async function isEligibleForSignUp(data){
 async function isInvitationKeyEligible(invitationKey){
     var message = {}
     if(invitationKey == testingInvitation){
-        message = message = await makeMessage(true, "" ,"")
+        message = await makeMessage(true, "" ,"")
+        return message
+    } else {
+        message = await makeMessage(false, "", "Því miður er appið enn í prófunarferli og því virkar þessi lykill ekki núna. Afsakið óþægindin.")
+        message.title = "Afsakið"
         return message
     }
     var client = new Client({connectionString})
