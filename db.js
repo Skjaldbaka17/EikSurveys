@@ -64,6 +64,10 @@ async function comparePass(data){
             message.title = "Villa?"
         } else {
             message.success = await bcrypt.compare(data.password, rows[0].password)
+            if (!message.success){
+                message.message = "Lykilorð eða netfang er vitlaust"
+                message.title = "Villa?"
+            }
         }
     }catch(error){
         console.log(error)
