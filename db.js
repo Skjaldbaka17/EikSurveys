@@ -26,15 +26,15 @@ async function login(data){
             const {rows} = result
             if(!rows[0]){
                 message.success = false
-                message.error = "Lykilorð eða netfang er vitlaust"
+                message.message = "Lykilorð eða netfang er vitlaust"
             } else {
                 message.success = true
-                message.error = ""
+                message.message = ""
                 message.userID = rows[0].userid
             }
         }catch(error){
             message.success = false
-            message.error = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+            message.message = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
         }finally{
             await client.end()
             return message
@@ -88,16 +88,16 @@ async function signUp(data){
                 const { rows } = result
                 if(!rows[0]){
                     message.success = false
-                    message.error = "Villa! Tókst ekki að vista user í DB"
+                    message.message = "Villa! Tókst ekki að vista user í DB"
                 } else {
                     message.success = true
-                    message.error = ""
+                    message.message = ""
                     message.userID = rows[0].userid
                 }
             }catch(error){
                 console.log(error)
                 message.success = false
-                message.error = "Villa! Kerfisvilla!"
+                message.message = "Villa! Kerfisvilla!"
             }finally{
                 await client.end()
                 return message
@@ -211,15 +211,15 @@ async function isEmailTaken(email){
         const{ rows } = result
         if(rows[0]){
             message.success = false
-            message.error = "Netfang er núþegar í notkun."
+            message.message = "Netfang er núþegar í notkun."
         } else {
             message.success = true
-            message.error = ""
+            message.message = ""
         }
     }catch(error){
         console.log(error)
         message.success = false
-        message.error = "Villa! Tókst ekki að ná í upplýsingar um netföng."
+        message.message = "Villa! Tókst ekki að ná í upplýsingar um netföng."
     }finally{
         await client.end()
         return message

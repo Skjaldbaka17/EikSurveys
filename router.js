@@ -29,6 +29,7 @@ async function login(req, res){
             const message = await db.login(data)
             operationDetails.message = message.error
             operationDetails.success = message.success
+            operationDetails.title = message.title
             operationDetails.user = {
                 userID : message.userID
             }
