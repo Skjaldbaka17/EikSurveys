@@ -27,7 +27,7 @@ async function login(req, res){
                 password: password,
             }
             const message = await db.login(data)
-            operationDetails.message = message.error
+            operationDetails.message = message.message
             operationDetails.success = message.success
             operationDetails.title = message.title
             operationDetails.user = {
@@ -37,6 +37,7 @@ async function login(req, res){
             console.log(error)
             operationDetails.success = false
             operationDetails.message = "Kerfisvilla!"
+            operationDetails.title = "Villa!"
         }
     }
     res.send(operationDetails)
