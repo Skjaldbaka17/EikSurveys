@@ -28,15 +28,15 @@ async function validateSSN(userID, ssn){
           message = await makeMessage(true, "", "")
           saveSSNInfo(response.data, userID)
       } else {
-          message = await makeMessage(false, response.status, "Kennitala fannst ekki")
+          message = await makeMessage(false, response.status, "Kennitala fannst ekki. Vinsamlegast reyndu aftur.")
           message.title = "Villa!"
       }
     }catch(error){
         console.log(error)
       message = await makeMessage(false, "error", "")
       if(error.status = 404){
-          message.title = "Kennitala ekki til"
-          message.message = "Engin manneskja til með þessa kennitölu"
+          message.title = "Kennitala ekki fundin"
+          message.message = "Kennitala fannst ekki. Vinsamlegast reyndu aftur."
       } else {
           message.title = "Villa!"
           message.message = "Vinsamlegast reyndu aftur síðar."
