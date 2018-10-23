@@ -4,6 +4,7 @@ const database = require('./createSurveysDb')
 const { getUserInfo } = require('./db')
 const {sendNotification} = require('./pushNotifications')
 const sendCustomMessage = require('./customAlert')
+const { onlyLetters } = require('./regex')
 const xss = require("xss");
 var easyWorker = require('./easyWorker')
 var sms = require('./sendSMS')
@@ -216,6 +217,7 @@ async function createIT(req, res){
                 theQuestions[i].multipleAnswers = false}
                 else {
             theQuestions[i].options = Array.isArray(theQuestions[i].options) ? theQuestions[i].options:[theQuestions[i].options]}
+            theQuestions[i].nameOfColumn = `no${i}` + await onlyLetters(questions[i].question)
         }
         console.log("HERE2")
         const data = {
