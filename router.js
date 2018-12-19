@@ -93,7 +93,7 @@ async function signUp(req, res){
             console.log("TheMessage1:", msg)
             if(msg.success){
                 console.log("Inside")
-                var message = await db.signUpWith(phone)
+                var message = await db.signUpWith(phone, invitationKey)
                 console.log("TheMessage3:", message)
                 await makeOperationDetails(message.success, message.error, message.message)
                 operationDetails.title = message.title
