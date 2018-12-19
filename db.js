@@ -635,7 +635,6 @@ async function saveFirstSurvey(answers, survey, userID){
     ssn = '${answers[1].answer}', age = ${await getAgeFromSSN(answers[1].answer)}, 
     location = '${await getLocationFrom(answers[4].answer)}', sex = '${answers[2].answer}', 
     socialposition = '${answers[3].answer}', address = '${answers[4].answer}', 
-    phone = '${answers[5].answer}', phoneid = '${answers[6].answer}', 
     myinvitationkey = '${myInvitationKey}'
     where userid = ${userID} returning *`
 console.log(query)
