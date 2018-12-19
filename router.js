@@ -19,7 +19,6 @@ async function login(req, res){
             phone = false
         }
     } = req.body
-try{
     if(version >= 1.2){
         console.log(singleAnswer, phone)
         if(!(singleAnswer&&phone)){
@@ -36,6 +35,9 @@ try{
                 console.log("TheMessage3:", message)
                 await makeOperationDetails(message.success, message.error, message.message)
                 operationDetails.title = message.title
+                operationDetails.user = {
+                    userID : message.userID
+                }
             } else {
                 await makeOperationDetails(false, msg.error, msg.message)
                 operationDetails.title = msg.title
@@ -66,9 +68,6 @@ try{
         }
     }
     res.send(operationDetails)
-} catch(error){
-    console.log(error)
-}
 }
 
 async function signUp(req, res){
