@@ -12,10 +12,10 @@ const minimumFirstAmount = 5000
 async function login(req, res){
     const {
         version = 1.0,
+        verifCode = false,
         user: {
             email = false,
             password = false,
-            verifCode = false,
             phone = false
         }
     } = req.body
