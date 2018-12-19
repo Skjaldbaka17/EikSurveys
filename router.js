@@ -28,7 +28,7 @@ try{
             operationDetails.title = "Villa!"
         } else {
             
-            var msg = await immediateAnswers.verifyPhone(userID, singleAnswer, phone)
+            var msg = await immediateAnswers.verifyPhone(null, singleAnswer, phone)
             console.log("TheMessage1:", msg)
             if(msg.success){
                 console.log("Inside")
