@@ -27,9 +27,13 @@ async function login(req, res){
             operationDetails.message = "Vinsamlegast reyndu aftur síðar"
             operationDetails.title = "Villa!"
         } else {
+            
             var msg = await immediateAnswers.verifyPhone(userID, singleAnswer, phone)
+            console.log("TheMessage1:", msg)
             if(msg.success){
+                console.log("Inside")
                 var message = await db.loginWithPhone(phone)
+                console.log("TheMessage3:", message)
                 await makeOperationDetails(message.success, message.error, message.message)
                 operationDetails.title = message.title
             } else {
@@ -46,6 +50,7 @@ async function login(req, res){
                 email: email,
                 password: password,
             }
+            console.log("2Mofo")
             const message = await db.login(data)
             operationDetails.message = message.message
             operationDetails.success = message.success
