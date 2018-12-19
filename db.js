@@ -108,7 +108,7 @@ async function comparePass(data){
 async function signUpWith(phone, invitationKey){
     var client = new Client({connectionString})
     await client.connect()
-
+var message = {}
     try{
         var query = `Insert into ${userDBName}(phone, invitationkey, loggedin) values($1, $2, 1) returning userid`
         var values = [phone, invitationKey]
