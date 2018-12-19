@@ -223,11 +223,11 @@ async function takeSurveyWithInvitationKey(req, res){
 
 async function submitAnswers(req, res){
     const {
-        version = 1.0,
         body: {
             userID = false,
             survey = false,
-            answers = false
+            answers = false,
+            version = 1.0
         }
     } = req
     if(!(userID&&survey&&answers) || (!survey.answerstable) || (!answers[0]) || 
