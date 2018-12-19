@@ -105,6 +105,33 @@ async function comparePass(data){
     }
 }
 
+async function signUpWith(phone){
+    var client = new Client({connectionString})
+    await client.connect()
+
+    try{
+        var query = `Insert into ${userDBName}(phone, invitationkey, loggedin) values($1, $2, 1) returning userid`
+        var values = [data.phone, data.invitationKey]
+        const result = await client.query(query, values)
+        const { rows } = result
+        if(!rows[0]){
+            message.success = false
+            message.message = "Villa! Tókst ekki að vista user í DB"
+        } else {
+            message.success = true
+            message.message = ""
+            message.userID = rows[0].userid
+        }
+    }catch(error){
+        console.log(error)
+        message.success = false
+        message.message = "Villa! Kerfisvilla!"
+    }finally{
+        await client.end()
+        return message
+    }  
+}
+
 async function signUp(data){
     var message = await isEligibleForSignUp(data)
     if(message.success){
@@ -847,6 +874,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, loginWithPhone, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist}
+var database = {signUp, signUpWith, login, loginWithPhone, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist, isInvitationKeyEligible}
 
 module.exports = database

@@ -73,14 +73,39 @@ async function login(req, res){
 async function signUp(req, res){
     try{
     const {
+        version = 1.0,
+        singleAnswer = false,
         user: {
+            phone = false,
             email = false,
             password = false,
             invitationKey = false
         }
     } = req.body
 
-    if(!(email&&password&&invitationKey) && !(myInvitationKey == "")){
+    if(version >= 1.2){
+        if(!(singleAnswer&&phone&&invitationKey)){
+            operationDetails.success = false
+            operationDetails.message = "Vinsamlegast reyndu aftur síðar"
+            operationDetails.title = "Villa!"
+        } else {
+            var msg = await immediateAnswers.verifyPhone(null, singleAnswer, phone)
+            console.log("TheMessage1:", msg)
+            if(msg.success){
+                console.log("Inside")
+                var message = await db.signUpWith(phone)
+                console.log("TheMessage3:", message)
+                await makeOperationDetails(message.success, message.error, message.message)
+                operationDetails.title = message.title
+                operationDetails.user = {
+                    userID : message.userID
+                }
+            } else {
+                await makeOperationDetails(false, msg.error, msg.message)
+                operationDetails.title = msg.title
+            }   
+        }
+    } else if(!(email&&password&&invitationKey) && !(myInvitationKey == "")){
         operationDetails.success = false
         operationDetails.message = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
     }else{
@@ -295,19 +320,38 @@ async function validatePhone(req, res){
     const {
         body:{
             singleAnswer = false,
+            invitationKey = false,
             userID = false
         }
     } = req
     if(singleAnswer && !userID){
-        var success = await db.doesUserExist(singleAnswer)
-        if(success){
-            var message = await immediateAnswers.validatePhone(null, singleAnswer)
-            await makeOperationDetails(message.success, message.error, message.message)
-            operationDetails.title = message.title
-        } else {
-            await makeOperationDetails(false, "No such Person Exists", "Það er enginn notandi með þetta símanúmer.")
-            operationDetails.title = "Villa!"
-        }
+            if(!invitationKey){
+                var success = await db.doesUserExist(singleAnswer)
+                if(success){
+                    var message = await immediateAnswers.validatePhone(null, singleAnswer)
+                    await makeOperationDetails(message.success, message.error, message.message)
+                    operationDetails.title = message.title
+                } else {
+                    await makeOperationDetails(false, "No such Person Exists", "Það er enginn notandi með þetta símanúmer.")
+                    operationDetails.title = "Villa!"
+                }
+            } else{
+                var success = await db.doesUserExist(singleAnswer)
+                if(success){
+                    await makeOperationDetails(false, "", "Það er núþegar til notandi með þetta símanúmer.")
+                    operationDetails.title = "Villa!"
+                } else {
+                    var message = await db.isInvitationKeyEligible(invitationKey)
+                    if(!message.success){
+                        await makeOperationDetails(false, message.error, message.message)
+                        operationDetails.title = message.title
+                    } else {
+                        var message = await immediateAnswers.validatePhone(null, singleAnswer)
+                        await makeOperationDetails(message.success, message.error, message.message)
+                        operationDetails.title = message.title
+                    }
+                }
+            }
     }else if(!(userID&&singleAnswer)){
         await makeOperationDetails(false, "Required Fields empty", "Vinsamlegast reyndu aftur síðar.")
         operationDetails.title = "Villa!"
