@@ -105,22 +105,16 @@ async function validateSSN(userID, ssn){
         var verifNumber = await getRandomInt(1000000)
 
         phoneValidation[`${userID}`] = verifNumber
-        var success = await saveVerificationNumber(userID, verifNumber)
+        phoneValidation[`${phone}`] = verifNumber
 
-        if(success){
-            sms.sendSMS(phone,verifNumber,"Eik")
-            message = await makeMessage(true, "", "")
-        } else {
-            delete phoneValidation[`${userID}`]
-            message = await makeMessage(false, "Error", "Gat ekki sent þér skilaboð. Vinsamlegast reyndu aftur síðar.")
-            message.title = villa
-        }
+        sms.sendSMS(phone,verifNumber,"Eik")
+        message = await makeMessage(true, "", "")
         return message
     }
 
-    async function saveVerificationNumber(userID, verificationNumber){
+    async function saveVerificationNumber(userID, verificationNumber, phone){
         var client = new Client({connectionString})
-        var query = `update ${userDBName} set phoneid = '${verificationNumber}' where userid = ${userID} returning *`
+        var query = `update ${userDBName} set phoneid = '${verificationNumber}' where phone = '${phone}' returning *`
         await client.connect()
         var success = false
 
@@ -147,33 +141,21 @@ async function validateSSN(userID, ssn){
         return num
       }
 
-      async function verifyPhone(userID, verifPhone){
+      async function verifyPhone(userID, verifPhone, phone){
           var message = {}
           if(phoneValidation[`${userID}`] == verifPhone){
               message = await makeMessage(true, "", "")
               delete phoneValidation[`${userID}`]
+              delete phoneValidation[`${phone}`]
               console.log("Variable On Server!!!")
               return message
-          }
-          var client = new Client({connectionString})
-          var query = `select * from ${userDBName} where userid = ${userID} and phoneid = '${verifPhone}'`
-          await client.connect()
-          try{
-              var result = await client.query(query)
-              var { rows } = result
-              if(!rows[0]){
-                  message = await makeMessage(false, "Error", "Rangur lykill. Lyklar eru bara nothæfir í skamma stund. Athugaðu hvort"+
-                " þú gafst upp rétt símanúmer og reyndu aftur.")
-                message.title = "Lykill passar ekki"
-              } else {
-                  message = await makeMessage(true, "", "")
-              }
-          }catch(error){
-              console.log(error)
-              message = await makeMessage(false, "Error", "Villa við að finna lykill. Vinsamlegast reyndu aftur síðar.")
-              message.title = "Villa!"
-          }finally{
-              await client.end()
+          } else if (phoneValidation[`${phone}`] == verifPhone){
+            message = await makeMessage(true, "", "")
+            delete phoneValidation[`${phone}`]
+            console.log("Variable On Server!!!")
+            return message
+          } else {
+              message = await makeMessage(false, "Too long waiting", "Þessi lykill er ekki lengur í notkun.")
               return message
           }
       }

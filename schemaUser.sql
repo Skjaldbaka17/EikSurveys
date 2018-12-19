@@ -27,8 +27,4 @@ CREATE TABLE eikusers(
     termsof BOOLEAN NOT NULL DEFAULT false
 );
 
--- customalert = '{"message":"Þú ert svalur", 
--- "title": "Yó!", 
--- "cancelButton": "Hætta", 
--- "url": "https://itunes.apple.com/us/app/quotel-quotes-quotations/id1394606175?mt=8"}'
--- "okeyButton": "Næs"
+-- {"message":"Ný uppfærsla af Eik er komin inn á AppStore. Viltu ná í hana?","title":"Ný uppfærsla","cancelButton":"Hætta","url":"https://itunes.apple.com/jm/app/eik/id1431790660?mt=8","okeyButton":"Allt í lagi"}

@@ -713,6 +713,26 @@ async function isNumeric(n){
     return (typeof n == "number" && !isNaN(n));
   }
 
+async function doesUserExist(phone){
+    var client = new Client({connectionString})
+    var query = `Select * from ${userDBName} where phone = ${phone};`
+    var success = false
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(rows[0]){
+            success = true
+        } 
+    }catch(error){
+        console.log(error)
+        success = false
+    }finally{
+        await client.end()
+        return success
+    }
+}
+
 async function getUserInfo(userID){
     var client = new Client({connectionString})
     var query = `Select * from ${userDBName} where userid = ${userID};`
@@ -801,6 +821,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo}
+var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist}
 
 module.exports = database

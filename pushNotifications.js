@@ -3,7 +3,6 @@ const apn = require('apn');
  
 let options = {
   token: {
-    // key: "AuthKey_DUWBVH8RU3.p8",
     // Replace keyID and teamID with the values you've previously saved.
     key: Buffer.from(process.env.AUTHKEY_APN, 'utf8'),
     keyId: process.env.KEY_ID,

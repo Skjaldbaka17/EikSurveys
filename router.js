@@ -271,8 +271,18 @@ async function validatePhone(req, res){
             userID = false
         }
     } = req
-    if(!(userID&&singleAnswer)){
-        await makeOperationDetails(false, "Required Fields empty", "Villa á okkar enda. Vinsamlegast reyndu aftur síðar.")
+    if(singleAnswer && !userID){
+        var success = await db.doesUserExist(singleAnswer)
+        if(success){
+            var message = await immediateAnswers.validatePhone(null, singleAnswer)
+            await makeOperationDetails(message.success, message.error, message.message)
+            operationDetails.title = message.title
+        } else {
+            await makeOperationDetails(false, "No such Person Exists", "Það er enginn notandi með þetta símanúmer.")
+            operationDetails.title = "Villa!"
+        }
+    }else if(!(userID&&singleAnswer)){
+        await makeOperationDetails(false, "Required Fields empty", "Vinsamlegast reyndu aftur síðar.")
         operationDetails.title = "Villa!"
     }else{
         console.log("USERID OG SINGLEANSER:", userID, singleAnswer)
@@ -282,6 +292,8 @@ async function validatePhone(req, res){
     }
     res.send(operationDetails)
 }
+
+
 
 async function changeDeviceToken(req, res){
     const {
