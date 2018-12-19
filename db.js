@@ -715,7 +715,7 @@ async function isNumeric(n){
 
 async function doesUserExist(phone){
     var client = new Client({connectionString})
-    var query = `Select * from ${userDBName} where phone = ${phone};`
+    var query = `Select * from ${userDBName} where phone = '${phone}';`
     var success = false
     try{
         await client.connect()
