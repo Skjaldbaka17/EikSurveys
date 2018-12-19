@@ -235,13 +235,14 @@ async function submitAnswers(req, res){
         await makeOperationDetails(false, "Required fields empty", "Þú hefur ekki lengur aðgang að þessari könnun. Vinsamlegast reyndu aftur síðar.")
     } else {
         var success = true
-        console.log("The answer:", answers[0].answers)
+        console.log("The answer:", version, survey.firstsurvey)
         if(version < 1.2 && survey.firstsurvey){
             var msg = await immediateAnswers.verifyPhone(userID, answers[answers.length-1].answer)
             success = msg.success
             await makeOperationDetails(false, msg.error, msg.message)
             operationDetails.title = msg.title
         }
+        console.log("After The Thing")
         if(success){
             var timeStuff = await getTimeStuff(answers)
             var message = await db.submitAnswers(userID, survey, answers, timeStuff)
