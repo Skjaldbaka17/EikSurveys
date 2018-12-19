@@ -223,6 +223,7 @@ async function takeSurveyWithInvitationKey(req, res){
 
 async function submitAnswers(req, res){
     const {
+        version = 1.0,
         body: {
             userID = false,
             survey = false,
@@ -235,7 +236,7 @@ async function submitAnswers(req, res){
     } else {
         var success = true
         console.log("The answer:", answers[0].answers)
-        if(survey.firstsurvey){
+        if(version < 1.2 && survey.firstsurvey){
             var msg = await immediateAnswers.verifyPhone(userID, answers[answers.length-1].answer)
             success = msg.success
             await makeOperationDetails(false, msg.error, msg.message)
