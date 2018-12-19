@@ -112,26 +112,6 @@ async function validateSSN(userID, ssn){
         return message
     }
 
-    async function saveVerificationNumber(userID, verificationNumber, phone){
-        var client = new Client({connectionString})
-        var query = `update ${userDBName} set phoneid = '${verificationNumber}' where phone = '${phone}' returning *`
-        await client.connect()
-        var success = false
-
-        try{
-            var result = await client.query(query)
-            var { rows } = result
-            if(rows[0]){
-                success = true
-            }
-        }catch(error){
-            console.log(error)
-        }finally{
-            await client.end()
-            return success
-        }
-    }
-
     async function getRandomInt(max) {
         var num = `${Math.floor(Math.random() * Math.floor(max))}`;
         var mis = 6 - num.length
@@ -143,13 +123,13 @@ async function validateSSN(userID, ssn){
 
       async function verifyPhone(userID, verifPhone, phone){
           var message = {}
-          if(phoneValidation[`${userID}`] == verifPhone){
+          if(userID && phoneValidation[`${userID}`] == verifPhone){
               message = await makeMessage(true, "", "")
               delete phoneValidation[`${userID}`]
               delete phoneValidation[`${phone}`]
               console.log("Variable On Server!!!")
               return message
-          } else if (phoneValidation[`${phone}`] == verifPhone){
+          } else if (phone && phoneValidation[`${phone}`] == verifPhone){
             message = await makeMessage(true, "", "")
             delete phoneValidation[`${phone}`]
             console.log("Variable On Server!!!")

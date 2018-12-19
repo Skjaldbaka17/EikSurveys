@@ -11,13 +11,32 @@ const minimumFirstAmount = 5000
 
 async function login(req, res){
     const {
+        version = 1.0,
         user: {
             email = false,
             password = false,
+            verifCode = false,
+            phone = false
         }
     } = req.body
 
-    if(!(email&&password)){
+    if(version >= 1.2){
+        if(!(verifCode&&phone)){
+            operationDetails.success = false
+            operationDetails.message = "Vinsamlegast reyndu aftur síðar"
+            operationDetails.title = "Villa!"
+        } else {
+            var msg = await immediateAnswers.verifyPhone(userID, verifCode, phone)
+            if(msg.success){
+                var message = await db.loginWithPhone(phone)
+                await makeOperationDetails(message.success, message.error, message.message)
+                operationDetails.title = message.title
+            } else {
+                await makeOperationDetails(false, msg.error, msg.message)
+                operationDetails.title = msg.title
+            }   
+        }
+    } else if(!(email&&password)){
         operationDetails.success = false
         operationDetails.message = `Verður að fylla inn í: ${email ? "": "netfang, "}${password ? "":"lykilorð, "}${invitationKey ? "":"boðslykil."}`
     }else{

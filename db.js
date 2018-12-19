@@ -13,6 +13,32 @@ const maxFriends = 1
 const friendReward = 500
 const testingInvitation = "FOLF101"
 
+async function loginWithPhone(phone){
+    var message = {}
+    var client = new Client({connectionString})
+    await client.connect()
+
+    try{
+        var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where phone = '${phone}' returning *`
+        const result = await client.query(query)
+        const {rows} = result
+        if(!rows[0]){
+            message.success = false
+            message.message = "Enginn notandi með þetta símanúmer"
+        } else {
+            message.success = true
+            message.message = ""
+            message.userID = rows[0].userid
+        }
+    }catch(error){
+        message.success = false
+        message.message = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+    }finally{
+        await client.end()
+        return message
+    }
+}
+
 async function login(data){
     var message = {}
     var client = new Client({connectionString})
@@ -821,6 +847,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, login, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist}
+var database = {signUp, login, loginWithPhone, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist}
 
 module.exports = database
