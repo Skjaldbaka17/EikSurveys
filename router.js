@@ -19,7 +19,7 @@ async function login(req, res){
             phone = false
         }
     } = req.body
-
+try{
     if(version >= 1.2){
         console.log(singleAnswer, phone)
         if(!(singleAnswer&&phone)){
@@ -66,6 +66,9 @@ async function login(req, res){
         }
     }
     res.send(operationDetails)
+} catch(error){
+    console.log(error)
+}
 }
 
 async function signUp(req, res){
