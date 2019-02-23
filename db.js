@@ -42,7 +42,9 @@ async function loginWithPhone(phone){
 async function login(data){
     var message = {}
     var client = new Client({connectionString})
+    console.log("HERE!!")
     message = await comparePass(data)
+    console.log(data)
     if(message.success){
         await client.connect()
 
