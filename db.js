@@ -11,7 +11,11 @@ const paymentDB = process.env.PAYMENTDB
 const invitationKeysDB = process.env.INVITATIONKEYSDB
 const maxFriends = 1
 const friendReward = 500
-const testingInvitation = "FOLF101"
+const testingInvitation = ["FOLF101", "Gallup", "Kóði", "Alfreð", 
+"Origo", "CCP", "Netapp", "íslandsbanki", 
+"tern", "Efla", "Algrím", "Meniga", "Teqhire",
+"authenteq", "Arion", "Kvika", "hackerrank", "solidclouds", 
+"Memento", "Jit"]
 
 async function loginWithPhone(phone){
     var message = {}
@@ -230,7 +234,9 @@ async function isEligibleForSignUp(data){
 
 async function isInvitationKeyEligible(invitationKey){
     var message = {}
-    if(invitationKey == testingInvitation){
+    var regex = new RegExp( testingInvitation.join( "|" ), "i");
+    var isInvited = regex.test( invitationKey ); 
+    if(isInvited){
         message = await makeMessage(true, "" ,"")
         return message
     } else {
