@@ -121,17 +121,112 @@
             optionsButton.class = "optionsButton"
             optionsButton.innerHTML = "Valmöguleikar"
 
+            var likertButton = document.createElement('button')
+            likertButton.type = "button"
+            likertButton.class = "optionsButton"
+            likertButton.innerHTML = "likert"
+
             var userInputButton = document.createElement('button')
             userInputButton.type = "button"
             userInputButton.class = "optionsButton"
             userInputButton.innerHTML = "Skriflegt inlegg"
             const q = questionNumber
 
+
+            likertButton.onclick = function () {
+                optionsButton.hidden = true
+                likertButton.hidden = true
+                userInputButton.hidden = true
+                var input = document.createElement('input')
+                input.type = "text"
+                input.name = `questions[${q}][likert][statement]`
+                input.placeholder = "Sjálfstæð staðhæfing"
+                input.class = "statementInput"
+
+                var leftOpinion = document.createElement('input')
+                leftOpinion.type = "text"
+                leftOpinion.name = `questions[${q}][likert][leftOpinion]`
+                leftOpinion.placeholder = "Vinstri skoðun"
+                leftOpinion.class = "opinionInput"
+
+                var rightOpinion = document.createElement('input')
+                rightOpinion.type = "text"
+                rightOpinion.name = `questions[${q}][likert][rightOpinion]`
+                rightOpinion.placeholder = "Hægri skoðun"
+                rightOpinion.class = "opinionInput"
+            
+                var maxInput = document.createElement('input')
+                maxInput.type = "number"
+                maxInput.name = `questions[${q}][likert][max]`
+                maxInput.placeholder = "Hæsti möguleiki"
+
+                var minInput = document.createElement('input')
+                minInput.type = "number"
+                minInput.name = `questions[${q}][likert][min]`
+                minInput.placeholder = "Lægsti möguleiki"
+                
+                var stepSizeInput = document.createElement('input')
+                stepSizeInput.type = "number"
+                stepSizeInput.name = `questions[${q}][likert][stepSize]`
+                stepSizeInput.placeholder = "Skrefstærð"
+
+                var startInput = document.createElement('input')
+                startInput.type = "number"
+                startInput.name = `questions[${q}][likert][start]`
+                startInput.placeholder = "ByrjunarVal"
+
+                var unitInput = document.createElement('input')
+                unitInput.type = "text"
+                unitInput.name = `questions[${q}][likert][unit]`
+                unitInput.placeholder = "TöluSkeyti"
+
+
+                var stepSizeVisibleLabel = document.createElement('label')
+                stepSizeVisibleLabel.class = "radioLabel"
+                stepSizeVisibleLabel.innerHTML = "Sést skrefstærðin?"
+                var stepSizeVisible = document.createElement('input')
+                stepSizeVisible.type = "checkbox"
+                stepSizeVisible.name = `questions[${q}][likert][stepSizeVisible]`
+
+                var continuousLabel = document.createElement('label')
+                continuousLabel.class = "radioLabel"
+                continuousLabel.innerHTML = "Draganlegt/Samfellt"
+                var continuous = document.createElement('input')
+                continuous.type = "checkbox"
+                continuous.name = `questions[${q}][likert][continuous]`
+
+                var optionsDiv = document.createElement('div')
+                optionsDiv.classList += "optionsDiv"
+                
+                optionsDiv.appendChild(input)
+                optionsDiv.appendChild(leftOpinion)
+                optionsDiv.appendChild(rightOpinion)
+                optionsDiv.appendChild(maxInput)
+                optionsDiv.appendChild(minInput)
+                optionsDiv.appendChild(stepSizeInput)
+                optionsDiv.appendChild(startInput)
+                optionsDiv.appendChild(unitInput)
+                optionsDiv.appendChild(stepSizeVisibleLabel)
+                optionsDiv.appendChild(stepSizeVisible)
+                optionsDiv.appendChild(continuousLabel)
+                optionsDiv.appendChild(continuous)
+
+                var fillerDiv = document.createElement('div')
+                var fillerDiv2 = document.createElement('div')
+                var fillerDiv3 = document.createElement('div')
+
+                div.appendChild(fillerDiv2)
+                div.appendChild(fillerDiv)
+                div.appendChild(fillerDiv3)
+                div.appendChild(optionsDiv)
+            }
+
             var optionsDiv = document.createElement('div')
             optionsDiv.classList += "optionsDiv"
             optionsButton.onclick = function () {
                 optionsButton.hidden = true
                 userInputButton.hidden = true
+                likertButton.hidden = true
                 var addOption = document.createElement('button')
                 addOption.type = "button"
                 addOption.class = "addOptionButton"
@@ -141,12 +236,23 @@
                 addOption.onclick = function() {
                         var option = document.createElement('input')
                         option.type = "text"
-                        option.name = `questions[${q}][options]`
+                        option.name = `questions[${q}][options][${options}][option]`
+                        
+                        var optionalLabel = document.createElement('label')
+                        optionalLabel.class = "radioLabel"
+                        optionalLabel.innerHTML = "Skrifa ef valið?"
+                        var optional = document.createElement('input')
+                        optional.type = "checkbox"
+                        optional.name = `questions[${q}][options][${options}][optional]`
+                        optional.value = 1
                         options++;
                         option.placeholder = `Valmöguleiki ${options}`
                         option.class = "option"
 
+
                         optionsDiv.appendChild(option)
+                        optionsDiv.appendChild(optionalLabel)
+                        optionsDiv.appendChild(optional)
                     }
                 var onlyOneAnswer = document.createElement('input')
                 onlyOneAnswer.type = "checkbox"
@@ -160,9 +266,12 @@
 
                 var aDiv = document.createElement('div')
 
+                var fillerDiv = document.createElement('div')
+
                 aDiv.appendChild(radioLabel)
                 aDiv.appendChild(onlyOneAnswer)
                 div.appendChild(aDiv)
+                div.appendChild(fillerDiv)
                 div.appendChild(addOption)
                 div.appendChild(optionsDiv)
                 
@@ -171,6 +280,7 @@
             userInputButton.onclick = function() {
                 optionsButton.hidden = true
                 userInputButton.hidden = true
+                likertButton.hidden = true
                 var input = document.createElement('input')
                 input.type = "text"
                 input.name = `questions[${q}][placeholder]`
@@ -218,6 +328,7 @@
 
             
             div.appendChild(question)
+            div.appendChild(likertButton)
             div.appendChild(optionsButton)
             div.appendChild(userInputButton)
             deleteDiv.appendChild(deleteQuestion)

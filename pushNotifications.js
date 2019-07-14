@@ -3,35 +3,14 @@ const apn = require('apn');
  
 let options = {
   token: {
+    // key: "AuthKey_DUWBVH8RU3.p8",
     // Replace keyID and teamID with the values you've previously saved.
     key: Buffer.from(process.env.AUTHKEY_APN, 'utf8'),
     keyId: process.env.KEY_ID,
    teamId: process.env.TEAM_ID
  },
- production: true //Change to true when Launch!
+ production: false//Change to true when Launch!
 };
-
-async function friendFinishedSurvey(deviceToken, name){
-  console.log("The Options:", options)
-  let apnProvider = new apn.Provider(options);
-  // Prepare the notifications
-  let notification = new apn.Notification();
-  notification.expiry = Math.floor(Date.now() / 1000) + 24 * 3600; // will expire in 24 hours from now
-  notification.badge = 1;
-  notification.sound = "ping.aiff";
-  notification.alert = `Vinur þinn, ${name}, hefur klárað sína fyrstu könnun. Svo við ákváðum að verðlauna þér 500kr.!`;
-  notification.payload = {'messageFrom': 'Eik'};
-  console.log("Trying:", deviceToken)
-  notification.topic = "YellowBus.Eik";
-  // Replace deviceToken with your particular token:
-  var thedeviceToken = deviceToken;
-  // Send the actual notification
-  apnProvider.send(notification, thedeviceToken).then( result => {
-    // Show the result of the send operation:
-    console.log(result);
-  });
-  await apnProvider.shutdown();
-}
 
 async function newSurveyAvailable(deviceTokens, nameOfSurvey, prizeForSurvey){
   console.log("The Options:", options)
@@ -108,4 +87,4 @@ async function sendNotification(deviceTokens, message){
 
 
 
-module.exports = {newSurveyAvailable, friendFinishedSurvey, sendNotification}
+module.exports = {newSurveyAvailable, sendNotification}

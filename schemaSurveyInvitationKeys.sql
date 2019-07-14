@@ -2,7 +2,7 @@ create table surveyinvitationkeys (
     surveyid integer not null,
     invitationkey VARCHAR(255) not null,
     used boolean not null default false,
-    usedby integer[] not null default '{}',
+    usedby varchar(255)[] not null default '{}',
     reusable boolean not null default false
 );
 

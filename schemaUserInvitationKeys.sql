@@ -1,5 +1,5 @@
 create table userinvitationkeys(
     invitationkey varchar(255) not null,
-    userid integer not null,
-    usedby integer[] not null default '{}'
+    userid varchar(255) not null,
+    usedby varchar(255)[] not null default '{}'
 )

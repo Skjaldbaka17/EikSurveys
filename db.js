@@ -1,40 +1,34 @@
 require('dotenv').config();
 const { Client } = require('pg');
 const { onlyLetters } = require('./regex')
-const pushNotifications = require('./pushNotifications')
-const bcrypt = require('bcrypt')
 
 const connectionString = process.env.DATABASE_URL;
 const userDBName = process.env.USERDBNAME
 const surveysDB = process.env.SURVEYSDB
 const paymentDB = process.env.PAYMENTDB
 const invitationKeysDB = process.env.INVITATIONKEYSDB
-const maxFriends = 1
-const friendReward = 500
-const testingInvitation = ["FOLF101", "Gallup", "Kóði", "Alfreð", 
-"Origo", "CCP", "Netapp", "íslandsbanki", 
-"tern", "Efla", "Algrím", "Meniga", "Teqhire",
-"authenteq", "Arion", "Kvika", "hackerrank", "solidclouds", 
-"Memento", "Jit"]
 
-async function loginWithPhone(phone){
+async function loginOrSignUpWithPhone(phone){
     var message = {}
     var client = new Client({connectionString})
     await client.connect()
 
     try{
-        var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where phone = '${phone}' returning *`
+    var query = `insert into ${userDBName} (phone, loggedin) values('${phone}', 1)  on conflict(phone) 
+        do update set loggedin = 1, lastactivitydate = current_timestamp returning *`
+        // var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where phone = '${phone}' returning *`
         const result = await client.query(query)
         const {rows} = result
         if(!rows[0]){
             message.success = false
-            message.message = "Enginn notandi með þetta símanúmer"
+            message.message = "Gat ekki innskráð þig. Vinsamlegast reyndu aftur síðar."
         } else {
             message.success = true
             message.message = ""
             message.userID = rows[0].userid
         }
     }catch(error){
+        console.log("ERRORLOGIN:", error)
         message.success = false
         message.message = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
     }finally{
@@ -43,162 +37,11 @@ async function loginWithPhone(phone){
     }
 }
 
-async function login(data){
-    var message = {}
-    var client = new Client({connectionString})
-    console.log("HERE!!")
-    message = await comparePass(data)
-    console.log(data)
-    if(message.success){
-        await client.connect()
-
-        try{
-            var query = `update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' returning *`
-            const result = await client.query(query)
-            const {rows} = result
-            if(!rows[0]){
-                message.success = false
-                message.message = "Lykilorð eða netfang er vitlaust"
-            } else {
-                message.success = true
-                message.message = ""
-                message.userID = rows[0].userid
-            }
-        }catch(error){
-            message.success = false
-            message.message = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
-        }finally{
-            await client.end()
-            return message
-        }
-    } else{
-        if(!message.message){
-            message.message = "Villa við vinnslu á gögnum"
-            message.title = "Villa!"
-        }
-        return message
-    }
-}
-
-async function comparePass(data){
-    var message = {}
-    var client = new Client({connectionString})
-    var query = `select * from ${userDBName} where email = '${data.email}'`
-    console.log(query)
-    await client.connect()
-    try{
-        var result = await client.query(query)
-        const { rows } = result
-        if(!rows[0]){
-            console.log("NooneHer")
-            message.success = false
-            message.message = "Lykilorð eða netfang er vitlaust"
-            message.title = "Villa?"
-        } else {
-            message.success = await bcrypt.compare(data.password, rows[0].password)
-            if (!message.success){
-                message.message = "Lykilorð eða netfang er vitlaust"
-                message.title = "Villa?"
-            }
-        }
-    }catch(error){
-        console.log(error)
-        message = await makeMessage(false, error, "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar.")
-        message.title = "Villa!"
-    }finally{
-        await client.end()
-        return message
-    }
-}
-
-async function signUpWith(phone, invitationKey){
-    var client = new Client({connectionString})
-    await client.connect()
-var message = {}
-    try{
-        var query = `Insert into ${userDBName}(phone, invitationkey, loggedin) values($1, $2, 1) returning userid`
-        var values = [phone, invitationKey]
-        const result = await client.query(query, values)
-        const { rows } = result
-        if(!rows[0]){
-            message.success = false
-            message.message = "Villa! Tókst ekki að vista user í DB"
-        } else {
-            message.success = true
-            message.message = ""
-            message.userID = rows[0].userid
-        }
-    }catch(error){
-        console.log(error)
-        message.success = false
-        message.message = "Villa! Kerfisvilla!"
-    }finally{
-        await client.end()
-        return message
-    }  
-}
-
-async function signUp(data){
-    var message = await isEligibleForSignUp(data)
-    if(message.success){
-            var client = new Client({connectionString})
-            await client.connect()
-
-            try{
-                var query = `Insert into ${userDBName}(email, password, invitationkey, loggedin) values($1, $2, $3, 1) returning userid`
-                var values = [data.email, data.password, data.invitationKey]
-                const result = await client.query(query, values)
-                const { rows } = result
-                if(!rows[0]){
-                    message.success = false
-                    message.message = "Villa! Tókst ekki að vista user í DB"
-                } else {
-                    message.success = true
-                    message.message = ""
-                    message.userID = rows[0].userid
-                }
-            }catch(error){
-                console.log(error)
-                message.success = false
-                message.message = "Villa! Kerfisvilla!"
-            }finally{
-                await client.end()
-                return message
-            } 
-    } else {
-        return message
-    }
-}
-
-async function generateUniqueInvitationKey(){
-    var key = (Math.random()*0xFFFFFF<<0).toString(16).toUpperCase()
-    var client = new Client({connectionString})
-    var query = `select * from ${userDBName} where myinvitationkey = '${key}'`
-    await client.connect()
-    try{
-        var result = await client.query(query)
-        var { rows } = result
-        while(rows[0]){
-            key = (Math.random()*0xFFFFFF<<0).toString(16).toUpperCase()
-            query = `select * from ${userDBName} where myinvitationkey = '${key}'`
-            result = await client.query(query)
-            rows = result.rows
-        }
-    }catch(error){
-        key = undefined
-    } finally{
-        await client.end()
-        return key
-    }
-}
-
 async function logout(userID){
     var message = {}
     var client = new Client({connectionString})
-    var query = `update ${userDBName} set loggedin = loggedin-1, lastactivitydate = current_timestamp, devicetoken = null where userid = ${userID} returning *`
-    // var query =`update ${userDBName} set loggedin = loggedin+1, lastactivitydate = current_timestamp where email = '${data.email}' and password = '${data.password}' returning *`
+    var query = `update ${userDBName} set loggedin = loggedin-1, lastactivitydate = current_timestamp, devicetoken = null where userid = '${userID}' returning *`
 
-    console.log("Logout:", query)
     try{
         console.log("Try8ing")
         await client.connect()
@@ -218,75 +61,6 @@ async function logout(userID){
     }finally{
         await client.end()
         console.log("End of logout!")
-        return message
-    }
-}
-
-async function isEligibleForSignUp(data){
-    var message = await isEmailTaken(data.email)
-    if(message.success){
-        message = await isInvitationKeyEligible(data.invitationKey)
-        return message
-    } else {
-        return message
-    }
-}
-
-async function isInvitationKeyEligible(invitationKey){
-    var message = {}
-    var regex = new RegExp( testingInvitation.join( "|" ), "i");
-    var isInvited = regex.test( invitationKey ); 
-    if(isInvited){
-        message = await makeMessage(true, "" ,"")
-        return message
-    } else {
-        message = await makeMessage(false, "", "Því miður er appið enn í prófunarferli og því virkar þessi lykill ekki núna. Afsakið óþægindin.")
-        message.title = "Afsakið"
-        return message
-    }
-    var client = new Client({connectionString})
-    var query = `select * from ${userDBName} where myinvitationkey = '${invitationKey}'`
-    await client.connect()
-    try{
-        const result = await client.query(query)
-        const { rows } = result
-        if(!rows[0] || rows.length > 1){
-            message = await makeMessage(false,"No invitation key", "Þessi boðslykill er ekki til")
-        } else if(rows[0].myfriends.length >= maxFriends){
-            message = await makeMessage(false, "This invitation key is used up", "Ekki er hægt að nota þennan boðslykil lengur. Of margir vinir.")
-        } else {
-            message = await makeMessage(true, "" ,"")
-        }
-    }catch(error){
-        console.log(error)
-        message = await makeMessage(false, error, "Kerfisvilla! Vinsamlegast reyndu aftur síðar.")
-    }finally{
-        await client.end()
-        return message
-    }
-}
-
-async function isEmailTaken(email){
-    var message = {}
-    var client = new Client({connectionString})
-    await client.connect()
-    try{
-        var query = `select * from ${userDBName} where email = '${email}'`
-        const result = await client.query(query)
-        const{ rows } = result
-        if(rows[0]){
-            message.success = false
-            message.message = "Netfang er núþegar í notkun."
-        } else {
-            message.success = true
-            message.message = ""
-        }
-    }catch(error){
-        console.log(error)
-        message.success = false
-        message.message = "Villa! Tókst ekki að ná í upplýsingar um netföng."
-    }finally{
-        await client.end()
         return message
     }
 }
@@ -324,12 +98,13 @@ async function feed(userID, surveyID, testID){
     }
     
     message.userInfo = userInfo
+    message.showInvitationButton = false
     return message
 }
 
 async function deleteCustomAlert(userID){
     var client = new Client({connectionString})
-    var query = `Update ${userDBName} set customalert = null where userid = ${userID};`
+    var query = `Update ${userDBName} set customalert = null where userid = '${userID}';`
     try{
         await client.connect()
         await client.query(query)
@@ -355,6 +130,7 @@ async function getFirstSurvey(){
         const result = await client.query(query)
         const { rows } = result
         if(rows[0]){
+            rows[0].prize = "Verðlaun: " + rows[0].prize+"kr."
             feed.push(rows[0])
         }
     }catch(error){
@@ -365,15 +141,20 @@ async function getFirstSurvey(){
     }
 }
 
+var sexes = ["Karl", "Kona"]
+var socialposition = ["Grunnskóla", "Menntaskóla", "Háskóla", "Vinnumarkaði"]
 async function getSurveyFeed(userInfo, surveyID){
+    var indexSex = await sexes.indexOf(userInfo.sex)
+    var indexSocialPos = await socialposition.indexOf(userInfo.socialposition)
+    console.log("Indexes:", indexSex, indexSocialPos)
     var client = new Client({connectionString})
     var query = `select * from ${surveysDB} where surveyid > ${surveyID} and
     needinvitation = false and
     currentamount < maxamount and firstsurvey = false and 
-    not (${userInfo.userid} = any (takenby)) and
+    not ('${userInfo.userid}') = any (takenby) and
     minage <= ${userInfo.age} and maxage >= ${userInfo.age} and 
-    '${userInfo.sex}' = any (sex) and
-    '${userInfo.socialposition}' = any (socialposition) and 
+    '${indexSex >= 0 ? userInfo.sex:"Annað"}' = any (sex) and
+    '${indexSocialPos >= 0 ? userInfo.socialposition:"Annað"}' = any (socialposition) and 
     '${userInfo.location}' = any (location)
     order by datecreated limit 10;`
     var feed = []
@@ -383,6 +164,9 @@ async function getSurveyFeed(userInfo, surveyID){
         await client.connect()
         const result = await client.query(query)
         const { rows } = result
+        for(r in rows){
+            rows[r].prize = "Verðlaun: " + rows[r].prize+"kr."
+        }
         feed = rows
     }catch(error){
         console.log(error)
@@ -414,7 +198,7 @@ async function takeSurveyWith(invitationKey, userID){
 async function isSurveyInvitationKeyEligible(invitationKey, userID){
     var message = {}
     var client = new Client({connectionString})
-    var query = `update ${invitationKeysDB} set usedby = array_append(usedby, ${userID}), used = true 
+    var query = `update ${invitationKeysDB} set usedby = array_append(usedby, '${userID}'), used = true 
     where invitationkey = '${invitationKey}' and used = false returning *`
     console.log("SurveyKeyEligibleQuery?", query)
     await client.connect()
@@ -447,7 +231,7 @@ async function isSurveyInvitationKeyEligible(invitationKey, userID){
 async function takeSurvey(userID, surveyID){
     var message = {}
     var client = new Client({connectionString})
-    var query = `Update ${surveysDB} set viewedby = array_append(viewedby, ${userID}) where surveyid = ${surveyID}
+    var query = `Update ${surveysDB} set viewedby = array_append(viewedby, '${userID}') where surveyid = ${surveyID}
     returning *;`
 
     try{
@@ -459,7 +243,16 @@ async function takeSurvey(userID, surveyID){
         + " að sýna henni áhuga og afsakaðu óþægindin.")
         } else {
             message = await makeMessage(true, "", "Allt heppnaðist")
+            var prize = rows[0].prize
             message.survey = rows[0]
+            message.survey.prize = "Verðlaun: " + prize+"kr."
+            if(message.survey.firstsurvey){
+                message.survey.informationText = "Þú hefur klárað þína fyrstu könnun hjá Eik! Eik hefur því launað þér " + prize+
+                "kr.! Verðlaunin hafa verið færð í stöðuna þína!"
+            } else {
+                message.survey.informationText = "Þú hefur klárað könnun hjá Eik!\n\nEik hefur lagt " +prize + " í sjóðinn þinn!"
+            }
+            
         }
     }catch(error){
         console.log(error)
@@ -485,7 +278,9 @@ async function submitAnswers(userID, survey, answers, timeStuff){
 }
 
 async function updateSurveyAndUser(userID, survey){
-    var mess = await updateUser(userID, survey.prize, survey.surveyid, survey.firstsurvey)
+    var surveyInfo = await getSurveyInfo(survey.surveyid)
+    if(!surveyInfo){return console.log("Could not get surveyInfo For:", userID, survey.surveyid)}
+    var mess = await updateUser(userID, surveyInfo.prize, survey.surveyid, survey.firstsurvey)
     if(!mess.success){
         console.log("ShitVillaaaa!!!!")
     }
@@ -501,7 +296,7 @@ async function updateUser(userID, prizeMoneyEarned, surveyID, firstsurvey){
     var client = new Client({connectionString})
     var query = `Update ${userDBName} set ${firstsurvey ? "firstsurveytaken = true , ":""}
     prizemoneyearned = prizemoneyearned + ${prizeMoneyEarned}, 
-    surveystaken = array_append(surveystaken, ${surveyID}) where userid = ${userID} returning *`
+    surveystaken = array_append(surveystaken, ${surveyID}) where userid = '${userID}' returning *`
     console.log("UpdateUser:", query)
     try{
         await client.connect()
@@ -524,7 +319,7 @@ async function updateUser(userID, prizeMoneyEarned, surveyID, firstsurvey){
 async function updateSurvey(userID, surveyID){
     var message = {}
     var client = new Client({connectionString})
-    var query = `Update ${surveysDB} set takenby = array_append(takenby, ${userID}),
+    var query = `Update ${surveysDB} set takenby = array_append(takenby, '${userID}'),
     currentamount = currentamount+1 where surveyid = ${surveyID} returning *`
     console.log("UpdateSurvey:", query)
     try{
@@ -550,9 +345,6 @@ async function saveAnswers(answers, survey, userID, timeStuff){
     console.log("HERE10")
     if(survey.firstsurvey){
         message = await saveFirstSurvey(answers, survey, userID)
-        if (message.success && message.invitationKey){
-            await rewardFriend(message.invitationKey, userID, message.userInfo)
-        }
         return message
     }
     
@@ -562,9 +354,9 @@ async function saveAnswers(answers, survey, userID, timeStuff){
     var value = "$1, $2, $3, $4, $5, "
     for(var i = 0; i < answers.length; i++){
         if(answers[i].multipleAnswers){
-            values.push(answers[i].answers)
+            values.push(answers[i].answers.filter((answer => answer)))
         } else { values.push(answers[i].answer)}
-        query += `no${i}` + await onlyLetters(answers[i].question)
+        query += answers[i].nameOfAnswerColumn
         value += `$${i+6}`
         if(i < answers.length-1){
             query += ","
@@ -595,43 +387,8 @@ async function saveAnswers(answers, survey, userID, timeStuff){
     }
 }
 
-async function rewardFriend(invitationKey, userID, userInfo){
-    var client = new Client({connectionString})
-    var friend = false
-    var query = `update ${userDBName} set myfriends = array_append(myfriends, ${userID}), 
-    prizemoneyearned = prizemoneyearned+${friendReward}, devicetoken = devicetoken where myinvitationkey = '${invitationKey}' returning *`
-    console.log("RewardFriendFunctionQuery:", query)
-    await client.connect()
-    try{
-        const result = await client.query(query)
-        const { rows } = result
-        if(rows[0]){
-            friend = rows[0]
-        }
-    }catch(error){
-        console.log(error)
-    }finally{
-        await client.end()
-        console.log("the Friend:", friend.deviceToken)
-        if(friend && friend.devicetoken){
-            console.log("HEREONEMAN")
-            try{
-            pushNotifications.friendFinishedSurvey(friend.devicetoken, userInfo.name)
-        }catch(error){
-            console.log("Push Error:", error)
-        }
-            console.log("HERETwoMAN")
-        }
-    }
-}
-
 async function saveFirstSurvey(answers, survey, userID){
     var message = {}
-    var myInvitationKey = await generateUniqueInvitationKey()
-    if(!myInvitationKey){
-        message = await makeMessage(false, "Could not make unique invitation key :/", "Gat ekki vistað svörin þín. Vinsamlegast reyndu aftur síðar.")
-        return message
-    }
     // var ssnTaken = await checkIfSSNExists(answers[1].answer, userID)
     // if(ssnTaken){
     //     message = await makeMessage(false, "SSN already exists in our database!", "Það er núþegar til notandi skráður á þessa kennitölu." +
@@ -642,10 +399,9 @@ async function saveFirstSurvey(answers, survey, userID){
     var query = `Update ${userDBName} set name = '${answers[0].answer}',
     ssn = '${answers[1].answer}', age = ${await getAgeFromSSN(answers[1].answer)}, 
     location = '${await getLocationFrom(answers[4].answer)}', sex = '${answers[2].answer}', 
-    socialposition = '${answers[3].answer}', address = '${answers[4].answer}', 
-    myinvitationkey = '${myInvitationKey}'
-    where userid = ${userID} returning *`
-console.log(query)
+    socialposition = '${answers[3].answer}', address = '${answers[4].answer}'
+    where userid = '${userID}' returning *`
+    console.log(query)
     try{
         await client.connect()
         const result = await client.query(query)
@@ -655,7 +411,6 @@ console.log(query)
         + " uppfærslu af appinu og prófaðu aftur.")
         } else {
             message = await makeMessage(true, "", "")
-            message.invitationKey = rows[0].invitationkey
             message.userInfo = rows[0]
         }
     }catch(error){
@@ -700,7 +455,7 @@ async function getPaid(data){
 async function hasWithdrawalInLine(data){
     var message = {}
     var client = new Client({connectionString})
-    var query = `select * from ${paymentDB} where userid = ${data.userID} and paid = false`
+    var query = `select * from ${paymentDB} where userid = '${data.userID}' and paid = false`
     console.log(query)
     await client.connect()
     try{
@@ -769,10 +524,6 @@ async function getAgeFromSSN(ssn){
         return age
 }
 
-async function isNumeric(n){
-    return (typeof n == "number" && !isNaN(n));
-  }
-
 async function doesUserExist(phone){
     var client = new Client({connectionString})
     var query = `Select * from ${userDBName} where phone = '${phone}';`
@@ -793,9 +544,31 @@ async function doesUserExist(phone){
     }
 }
 
+async function getSurveyInfo(surveyID){
+    var client = new Client({connectionString})
+    var query = `Select * from ${surveysDB} where surveyid = ${surveyID};`
+    var survey = {}
+    try{
+        await client.connect()
+        const result = await client.query(query)
+        const { rows } = result
+        if(!rows[0]){
+            survey = null
+        } else {
+            survey = rows[0]
+        }
+    }catch(error){
+        console.log(error)
+        survey = null
+    }finally{
+        await client.end()
+        return survey
+    }
+}
+
 async function getUserInfo(userID){
     var client = new Client({connectionString})
-    var query = `Select * from ${userDBName} where userid = ${userID};`
+    var query = `Select * from ${userDBName} where userid = '${userID}';`
     var userInfo = {}
     try{
         await client.connect()
@@ -805,13 +578,11 @@ async function getUserInfo(userID){
             userInfo = null
         } else {
             userInfo = rows[0]
+            userInfo.userid = userInfo.userid.toUpperCase()
             userInfo.surveysTaken = rows[0].surveystaken.length
-            userInfo.friendsInvited = rows[0].myfriends.length
-            userInfo.friendsInviteLeft = maxFriends - rows[0].myfriends.length
             userInfo.prizeMoneyEarned = userInfo.prizemoneyearned 
             userInfo.prizeMoneyCashed = userInfo.prizemoneycashed 
             userInfo.prizeMoneyLeft = userInfo.prizemoneyearned - userInfo.prizemoneycashed 
-            var friendsText = userInfo.friendsInviteLeft == 1 ? "vin":"vini"
             userInfo.myInformation = [
                 {
                     text: "Kannanir teknar: ",
@@ -820,14 +591,6 @@ async function getUserInfo(userID){
                 {
                     text: "Heildarupphæð safnað: ",
                     data: `${userInfo.prizeMoneyEarned} kr.`
-                },
-                {
-                    text: "Vinum boðið: ",
-                    data: `${userInfo.friendsInvited} vinir`
-                },
-                {
-                    text: "Átt inni: ",
-                    data: `${userInfo.friendsInviteLeft} ${friendsText}`
                 }
             ]
         }
@@ -846,7 +609,7 @@ async function changeDeviceToken(userID, token){
         await cleanUpToken(token)
     }
     var client = new Client({connectionString})
-    var query = `update ${userDBName} set devicetoken = '${token}' where userid = ${userID}`
+    var query = `update ${userDBName} set devicetoken = '${token}' where userid = '${userID}'`
 
     try{
         await client.connect()
@@ -881,6 +644,6 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {signUp, signUpWith, login, loginWithPhone, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist, isInvitationKeyEligible}
+var database = {loginOrSignUpWithPhone, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist}
 
 module.exports = database

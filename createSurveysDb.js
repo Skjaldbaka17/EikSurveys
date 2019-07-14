@@ -96,8 +96,12 @@ async function qWithTimeRequired(questions){
         }
         if(Array.isArray(questions[i].options)){
             for(var j = 0; j < questions[i].options.length; j++){
-                var words = questions[i].options[j].split(" ")
-                time += round(words.length/6.0, 0.5)
+                if(questions[i].options[j].optional){
+                    time += 1.5
+                } else {
+                    var words = questions[i].options[j].option ? questions[i].options[j].option.split(" "):[]
+                    time += round(words.length/6.0, 0.5)
+                }
             }
         } else {
             time += 1.5
@@ -261,13 +265,17 @@ async function createAnswersTable(questions, name){
             id serial PRIMARY key,
             surveytaken TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             surveyid integer not null,
-            userid integer not null,
+            userid varchar(255) not null,
             timerequired double precision[],
             timespent double precision[], 
             toofast boolean[], `
 
         for(var i = 0; i < questions.length; i++){
-            query += ( `no${i}` + await onlyLetters(questions[i].question)) + " TEXT" + (questions[i].multipleAnswers ? "[]":"")
+            if(questions[i].likert){
+                query += (questions[i].nameOfAnswerColumn) + " integer not null"
+            } else {
+                query += (questions[i].nameOfAnswerColumn) + " TEXT" + (questions[i].multipleAnswers ? "[]":"")
+            }
             if(i < questions.length - 1){
                 query += ","
             } else {query += " )"}

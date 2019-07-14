@@ -1,13 +1,9 @@
 CREATE TABLE eikusers(
-    userid serial PRIMARY key,
+    key serial primary key,
+    userid uuid default uuid_generate_v4(),
     ssn varchar(255) NOT NULL DEFAULT '',
     age Integer not null default -1,
-    email varchar(255) NOT NULL DEFAULT '',
-    password VARCHAR(255) NOT NULL DEFAULT '', 
-    myinvitationkey varchar(255) NOT NULL DEFAULT '',
-    myfriends integer[] not null default '{}',
-    invitationkey varchar(255) NOT NULL DEFAULT '',
-    phone Varchar(255) NOT NULL DEFAULT '',
+    phone Varchar(255) unique NOT NULL DEFAULT '',
     phoneid VARCHAR(255) NOT NULL DEFAULT '',
     name VARCHAR(255) NOT NULL DEFAULT '',
     sex varchar(255) NOT NULL DEFAULT '',
@@ -27,4 +23,11 @@ CREATE TABLE eikusers(
     termsof BOOLEAN NOT NULL DEFAULT false
 );
 
--- {"message":"Ný uppfærsla af Eik er komin inn á AppStore. Viltu ná í hana?","title":"Ný uppfærsla","cancelButton":"Hætta","url":"https://itunes.apple.com/jm/app/eik/id1431790660?mt=8","okeyButton":"Allt í lagi"}
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; fyrir uuid_generate_v4()!   
+
+-- customalert = '{"message":"Þú ert svalur", 
+-- "title": "Yó!", 
+-- "cancelButton": "Hætta", 
+-- "url": "https://itunes.apple.com/us/app/quotel-quotes-quotations/id1394606175?mt=8",
+-- "okeyButton": "Næs"
+-- }'

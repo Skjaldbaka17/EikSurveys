@@ -185,7 +185,7 @@ async function notifyUsersOfSurvey(req, res){
 }
 
 async function createIT(req, res){
-    console.log("The Body:", req.body)
+    console.log("The Body:", JSON.stringify(req.body))
     const {
         body: {
             name = false,
@@ -203,6 +203,7 @@ async function createIT(req, res){
             amountOfInvitationKeys = false
         }
     } = req
+
     if(!(name&&about&&sex&&socialposition&&location&&questions&&(questions.length > 0)) || (needInvitation&&!amountOfInvitationKeys)){
         console.log("Ekki nægar upplýsingar")
         await makeOperationDetails(false, "Error!", "Ekki nægar upplýsingar")
@@ -214,12 +215,26 @@ async function createIT(req, res){
             theQuestions[i].multipleAnswers = theQuestions[i].multipleAnswers ? false:true
             theQuestions[i].onlyNumbers = theQuestions[i].onlyNumbers ? true:false
             if(!theQuestions[i].options) {
+                if(theQuestions[i].likert){
+                    theQuestions[i].likert.stepSizeVisible = theQuestions[i].likert.stepSizeVisible ? true:false
+                    theQuestions[i].likert.continuous = theQuestions[i].likert.continuous ? true:false
+                    theQuestions[i].likert.max = theQuestions[i].likert.max ? Number(theQuestions[i].likert.max):100
+                    theQuestions[i].likert.min = theQuestions[i].likert.min ? Number(theQuestions[i].likert.min):1
+                    theQuestions[i].likert.stepSize = theQuestions[i].likert.stepSize ? Number(theQuestions[i].likert.stepSize):1
+                    theQuestions[i].likert.start = 
+                        theQuestions[i].likert.start ? Number(theQuestions[i].likert.start):parseInt(((theQuestions[i].likert.max + theQuestions[i].likert.min)/2))
+                }
                 theQuestions[i].multipleAnswers = false}
-                else {
-            theQuestions[i].options = Array.isArray(theQuestions[i].options) ? theQuestions[i].options:[theQuestions[i].options]}
-            theQuestions[i].nameOfColumn = `no${i}` + await onlyLetters(questions[i].question)
+            else {
+                theQuestions[i].options = Array.isArray(theQuestions[i].options) ? theQuestions[i].options:[theQuestions[i].options]
+                for(var j = 0; j < theQuestions[i].options.length; j++){
+                    theQuestions[i].options[j].optional = theQuestions[i].options[j].optional ? true:false
+                }
+            }
+            theQuestions[i].nameOfAnswerColumn = `no${i}` + await onlyLetters(questions[i].question)
+            // console.log("Name Of AC:", theQuestions[i].nameOfAnswerColumn)
         }
-        console.log("HERE2")
+        console.log(JSON.stringify(theQuestions))
         const data = {
             name: name,
             prize: prize,
@@ -249,6 +264,12 @@ async function createIT(req, res){
     else {res.redirect('back')}
 }
 
+async function termsAndConditions(req, res){
+    console.log("Here")
+    res.render('termsAndConditions')
+    res.end()
+}
+
 async function privacyPolicy(req, res){
     console.log("Here")
     res.render('privacyPolicy')
@@ -273,7 +294,8 @@ function catchErrors(fn) {
 
 router.use(catchErrors(cleanUp))
 router.get('/eik', catchErrors(home))
-router.get('/eik/skilmalar', catchErrors(privacyPolicy))
+router.get('/eik/skilmalar', catchErrors(termsAndConditions))
+router.get('/eik/privacyPolicy', catchErrors(privacyPolicy))
 router.post('/createSurvey', catchErrors(createSurvey))
 router.post('/createIT', catchErrors(createIT))
 router.get('/surveyCreated', function(req, res){res.render('surveyCreated')})
