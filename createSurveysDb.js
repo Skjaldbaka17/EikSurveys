@@ -171,9 +171,12 @@ async function notifyUsersOfNewSurvey(survey){
     var client = new Client({connectionString})
     var query = `select devicetoken from ${usersDB} where 
     devicetoken is not null and
-    age >= ${survey.minage} and age <= ${survey.maxage} and
-    sex = any ('{${survey.sex}}') and socialposition = any ('{${survey.socialposition}}') and
-    location = any ('{${survey.location}}')`
+    age >= ${survey.minage} and age <= ${survey.maxage}`
+    var sex = survey.sex.includes("Annað") ? `(sex = any ('{${survey.sex}}') or not sex = any('{Karl,Kona}'))`:`sex = any ('{${survey.sex}}')`
+    var socialposition = survey.socialposition.includes("Annað") ? `(socialposition = any ('{${survey.socialposition}}') or not socialposition = any('{Grunnskóla,Menntaskóla,Háskóla,Vinnumarkaði}'))`:
+    `socialposition = any ('{${survey.socialposition}}')`
+    var location = `location = any ('{${survey.location}}')`
+    query += ` and ${sex} and ${socialposition} and ${location}`
     console.log("NotifyingQuery", query)
     await client.connect()
     try{
@@ -265,7 +268,7 @@ async function createAnswersTable(questions, name){
             id serial PRIMARY key,
             surveytaken TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             surveyid integer not null,
-            userid varchar(255) not null,
+            userid uuid not null,
             timerequired double precision[],
             timespent double precision[], 
             toofast boolean[], `

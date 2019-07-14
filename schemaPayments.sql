@@ -1,6 +1,6 @@
 CREATE TABLE Payments(
     paymentid serial PRIMARY key,
-    userid varchar(255) NOT null,
+    userid uuid NOT null,
     processed BOOLEAN NOT NULL DEFAULT false,
     paid BOOLEAN NOT NULL DEFAULT false,
     money INTEGER NOT null,

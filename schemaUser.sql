@@ -1,9 +1,9 @@
 CREATE TABLE eikusers(
-    key serial primary key,
-    userid uuid default uuid_generate_v4(),
+    key serial PRIMARY key,
+    userid uuid DEFAULT uuid_generate_v4(),
     ssn varchar(255) NOT NULL DEFAULT '',
-    age Integer not null default -1,
-    phone Varchar(255) unique NOT NULL DEFAULT '',
+    age INTEGER NOT NULL DEFAULT -1,
+    phone Varchar(255) UNIQUE NOT NULL DEFAULT '',
     phoneid VARCHAR(255) NOT NULL DEFAULT '',
     name VARCHAR(255) NOT NULL DEFAULT '',
     sex varchar(255) NOT NULL DEFAULT '',
@@ -12,15 +12,15 @@ CREATE TABLE eikusers(
     location varchar(255) DEFAULT '',
     surveystaken integer[] NOT NULL DEFAULT '{}',
     loggedin INTEGER NOT NULL DEFAULT 0,
-    firstSurveyTaken Boolean not null default false,
-    prizemoneyearned Integer not null default 0,
-    prizemoneycashed integer not null default 0,
-    customalert jsonb default null,
+    firstSurveyTaken BOOLEAN NOT NULL DEFAULT FALSE,
+    prizemoneyearned INTEGER NOT NULL DEFAULT 0,
+    prizemoneycashed INTEGER NOT NULL DEFAULT 0,
+    customalert jsonb DEFAULT null,
     DATECreated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     lastActivityDate TIMESTAMP NOT NULL DEFAULT now(),
-    devicetoken text DEFAULT null,
-    ssninfo jsonb default null,
-    termsof BOOLEAN NOT NULL DEFAULT false
+    devicetoken text DEFAULT NULL,
+    ssninfo jsonb DEFAULT null,
+    termsof BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; fyrir uuid_generate_v4()!   
