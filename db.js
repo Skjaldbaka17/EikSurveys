@@ -250,7 +250,7 @@ async function takeSurvey(userID, surveyID){
                 message.survey.informationText = "Þú hefur klárað þína fyrstu könnun hjá Eik! Eik hefur því launað þér " + prize+
                 "kr.! Verðlaunin hafa verið færð í stöðuna þína!"
             } else {
-                message.survey.informationText = "Þú hefur klárað könnun hjá Eik!\n\nEik hefur lagt " +prize + " í sjóðinn þinn!"
+                message.survey.informationText = "Þú hefur klárað könnun hjá Eik!\n\nEik hefur lagt " +prize + "kr. í sjóðinn þinn!"
             }
             
         }
