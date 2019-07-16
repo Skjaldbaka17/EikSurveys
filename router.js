@@ -42,7 +42,6 @@ async function login(req, res){
             } else {
                 console.log("HERE")
                 var msg = await immediateAnswers.verifyPhone(null, singleAnswer, phone)
-                var msg = { success: true, error: '', message: '' }
                 console.log("TheMessage1:", msg)
                 if(msg.success){
                     console.log("Inside")
