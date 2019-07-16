@@ -7,6 +7,63 @@ const userDBName = process.env.USERDBNAME
 const surveysDB = process.env.SURVEYSDB
 const paymentDB = process.env.PAYMENTDB
 const invitationKeysDB = process.env.INVITATIONKEYSDB
+const phoneValidationDB = process.env.PHONEVALIDATIONDB
+
+
+async function verifyPhone(phone, key){
+    var query = `update ${phoneValidationDB} set used = true
+     where phone = '${phone}' and validationkey = '${key}' and used = false returning *;`
+    var message = {}
+    var client = new Client({connectionString})
+    console.log(query)
+    await client.connect()
+    try{
+        const result = await client.query(query)
+        const {rows} = result
+        if(!rows[0]){
+            message.success = false
+            message.message = ""
+        } else {
+            message.success = true
+            message.message = ""
+        }
+    }catch(error){
+        console.log("ERRORverifyPhone:", error)
+        message.success = false
+        message.message = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+    }finally{
+        await client.end()
+        return message
+    }
+}
+async function setPhoneValidationKey(phone, key){
+    var query = `INSERT INTO ${phoneValidationDB} (phone, validationkey) 
+    values('${phone}', '${key}') 
+    ON CONFLICT (phone) 
+    DO UPDATE SET validationkey = '${key}' RETURNING *;`
+    var message = {}
+    console.log(query)
+    var client = new Client({connectionString})
+    await client.connect()
+    try{
+        const result = await client.query(query)
+        const {rows} = result
+        if(!rows[0]){
+            message.success = false
+            message.message = "Gat ekki tengt þig við þjón."
+        } else {
+            message.success = true
+            message.message = ""
+        }
+    }catch(error){
+        console.log("ERRORSetPhoneValidatinoKey:", error)
+        message.success = false
+        message.message = "Villa! Vefurinn liggur niðri. Prófaðu aftur síðar."
+    }finally{
+        await client.end()
+        return message
+    }
+}
 
 async function loginOrSignUpWithPhone(phone){
     var message = {}
@@ -644,6 +701,8 @@ async function makeMessage(success, error, message){
     return message
 }
 
-var database = {loginOrSignUpWithPhone, logout, feed, takeSurvey, submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, getUserInfo, doesUserExist}
+var database = {loginOrSignUpWithPhone, logout, feed, takeSurvey, 
+    submitAnswers, getPaid, takeSurveyWith, changeDeviceToken, 
+    getUserInfo, doesUserExist, setPhoneValidationKey,verifyPhone}
 
 module.exports = database

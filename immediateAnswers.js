@@ -2,6 +2,7 @@ require('dotenv').config()
 const axios = require('axios'); // promised based requests - like fetch()
 const { Client } = require('pg');
 const sms = require('./sendSMS')
+const db = require('./db')
 
 var phoneValidation = {}
 const connectionString = process.env.DATABASE_URL;
@@ -104,15 +105,24 @@ async function validateSSN(userID, ssn){
         var message = {}
         var verifNumber = await getRandomInt(1000000)
 
-
         //Put into database or Redis!!!! UserID is null on login and signup!
-        phoneValidation[`${userID}`] = verifNumber
-        phoneValidation[`${phone}`] = verifNumber
-
-        // console.log("VERIFY:", verifNumber)
-        sms.sendSMS(phone,verifNumber,"Eik")
-        message = await makeMessage(true, "", "")
-        return message
+        if(!userID){
+            message = await db.setPhoneValidationKey(phone, verifNumber)
+            if(message.success){
+                // console.log("VERIFY:", verifNumber)
+                sms.sendSMS(phone,verifNumber,"Eik")
+                message = await makeMessage(true, "", "")
+                return message
+            } else {
+                return message
+            }
+        } else {
+            phoneValidation[`${userID}`] = verifNumber
+            // console.log("VERIFY:", verifNumber)
+            sms.sendSMS(phone,verifNumber,"Eik")
+            message = await makeMessage(true, "", "")
+            return message
+        }
     }
 
     async function getRandomInt(max) {
@@ -125,8 +135,13 @@ async function validateSSN(userID, ssn){
       }
 
       async function verifyPhone(userID, verifPhone, phone){
-          //Use redis to VERIFY!!! 
-          var message = {}
+        var message = {}
+        if(!userID){
+            //Login/SignupFunctionality
+            message = await db.verifyPhone(phone, verifPhone)
+            return message
+        }
+          
           console.log("The Validation:", phoneValidation)
           if(userID && phoneValidation[`${userID}`] == verifPhone){
               message = await makeMessage(true, "", "")

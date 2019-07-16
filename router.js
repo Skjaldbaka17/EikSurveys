@@ -41,7 +41,7 @@ async function login(req, res){
                 operationDetails.title = "Villa!"
             } else {
                 console.log("HERE")
-                // var msg = await immediateAnswers.verifyPhone(null, singleAnswer, phone)
+                var msg = await immediateAnswers.verifyPhone(null, singleAnswer, phone)
                 var msg = { success: true, error: '', message: '' }
                 console.log("TheMessage1:", msg)
                 if(msg.success){
