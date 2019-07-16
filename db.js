@@ -22,7 +22,7 @@ async function verifyPhone(phone, key){
         const {rows} = result
         if(!rows[0]){
             message.success = false
-            message.message = ""
+            message.message = "Þessi kóði er ekki til"
         } else {
             message.success = true
             message.message = ""
