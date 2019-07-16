@@ -37,10 +37,10 @@ async function verifyPhone(phone, key){
     }
 }
 async function setPhoneValidationKey(phone, key){
-    var query = `INSERT INTO ${phoneValidationDB} (phone, validationkey) 
-    values('${phone}', '${key}') 
+    var query = `INSERT INTO ${phoneValidationDB} (phone, validationkey, used) 
+    values('${phone}', '${key}', false) 
     ON CONFLICT (phone) 
-    DO UPDATE SET validationkey = '${key}' RETURNING *;`
+    DO UPDATE SET validationkey = '${key}', used = false RETURNING *;`
     var message = {}
     console.log(query)
     var client = new Client({connectionString})
