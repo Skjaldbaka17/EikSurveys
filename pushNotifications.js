@@ -9,7 +9,7 @@ let options = {
     keyId: process.env.KEY_ID,
    teamId: process.env.TEAM_ID
  },
- production: false//Change to true when Launch!
+ production: process.env.PRODUCTION//Change to true when Launch!
 };
 
 async function newSurveyAvailable(deviceTokens, nameOfSurvey, prizeForSurvey){
