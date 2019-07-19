@@ -119,7 +119,7 @@ async function feed(req, res){
         operationDetails.minimumFirstAmount = message.userInfo.prizeMoneyCashed > 0 ? 0:minimumFirstAmount
         operationDetails.showInvitationButton = message.showInvitationButton
         operationDetails.showAur = false
-        operationDetails.reachOutUrl = "https://einsibezti.wixsite.com/eikapppro"
+        operationDetails.reachOutUrl = "http://eikapp.is"
     }
     console.log("Send In Feed:", JSON.stringify(operationDetails.surveys.length))
     res.send(operationDetails)
