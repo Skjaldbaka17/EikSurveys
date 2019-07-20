@@ -266,7 +266,7 @@ async function createIT(req, res){
 
 async function termsAndConditions(req, res){
     console.log("Here")
-    res.render('termsAndConditions')
+    res.render('terms&Conditions')
     res.end()
 }
 
